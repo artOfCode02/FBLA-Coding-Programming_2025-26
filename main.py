@@ -1,48 +1,78 @@
-import pip._vendor.requests 
+import pip._vendor.requests as requests
+from initBase import User
+import reviews
+import curses
+from curses import wrapper
 
 API_KEY = "fdcb2789a931407f84d539feaf6621fb"
 url = "https://api.geoapify.com/v2/places"
 
 
-def getUserCity():
-    city = input("What is your city?: ")
-    location = pip._vendor.requests.get("https://ipinfo.io/json").json()
-    
+def displayStats(stdscr, data):
+	col1 = 0 # Business name column
+	col2 = int((curses.COLS - 1) / 4) # Address column
+	col3 = int((curses.COLS - 1) / 2) # City + state column
+	col4 = int(3 * ((curses.COLS - 1) / 4)) # Reviews column
 
-    return location
+	i = 0
+	for place in data["features"]:
+		name = place["properties"]["name"]
+		houseNumber = place["properties"]["housenumber"]
+		street = place["properties"]["street"]
+		city = place["properties"]["city"]
+		state = place["properties"]["state"]
+		address = houseNumber + " " + street
+		region = city + ", " + state
 
-def getBusinessCategory():
-    category = input("What type of business are you looking for? (food, retail, services): ")
+		#reviews = reviews.readReview(name)
 
-    if category == "resturant":
-        returnCategory = "catering"
-    elif category == "shopping":
-        returnCategory = "commercial"
-    elif category == "entertainment":
-        returnCategory = "entertainment"
+		stdscr.addstr(i + 2, col1, name)
+		stdscr.addstr(i + 2, col2, address)
+		stdscr.addstr(i + 2, col3, region)
 
-    return returnCategory
+		input()
 
-
-
-##############################################
-# MAIN PROGRAM
-
-latitude, longitude = getUserCity()["loc"].split(",")
-
-params = {
-    "categories": f"{getBusinessCategory()}",
-    "filter": f"circle:{longitude},{latitude},5000",
-    "limit": 10,
-    "apiKey": API_KEY
-}
-
-response = pip._vendor.requests.get(url, params=params)
-data = response.json()
-
-for place in data["features"]:
-    name = place["properties"]["name"]
-    address = place["properties"]["formatted"]
-    print(name, "-", address)
+		++i
 
 ##############################################
+# MAIN PROGRAM #
+
+def main():
+	user = User()
+
+	params = {
+		"categories": f"{user.businessType}",
+		"filter": f"circle:{user.longitude},{user.latitude},5000",
+		"limit": 10,
+		"apiKey": API_KEY
+	}
+
+	response = requests.get(url, params=params)
+	data = response.json()
+
+	stdscr = curses.initscr()
+	curses.cbreak()
+	curses.noecho()
+	stdscr.keypad(True)
+
+	displayStats(stdscr, data)
+
+	wrapper(stdscr)
+
+	# for place in data["features"]:
+	# 	name = place["properties"]["name"]
+	# 	houseNumber = place["properties"]["housenumber"]
+	# 	street = place["properties"]["street"]
+	# 	city = place["properties"]["city"]
+	# 	state = place["properties"]["state"]
+	# 	zipcode = place["properties"]["postcode"]
+	# 	address = place["properties"]["formatted"]
+	# 	print(name, "-", houseNumber, street, city + ", " + state)
+	# 	#reviews.writeReview(user, name)
+	# 	reviews.readReview("Papa John's")
+
+################################################
+
+
+if __name__ == "__main__":
+	main()
