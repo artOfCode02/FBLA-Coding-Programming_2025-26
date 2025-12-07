@@ -24,7 +24,6 @@
     <Compile Include="initBase.py" />
     <Compile Include="main.py" />
     <Compile Include="reviews.py" />
-    <Compile Include="window.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="reviews.json" />
