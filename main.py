@@ -5,11 +5,14 @@ import curses
 import json
 from curses import wrapper
 
+import window
+
 API_KEY = "fdcb2789a931407f84d539feaf6621fb"
 url = "https://api.geoapify.com/v2/places"
 
 
 def displayStats(stdscr, data, cursorY):
+	stdscr.clear()
 	col1 = 0 # Business name column
 	col2 = int((curses.COLS - 1) / 4) # Address column
 	col3 = int((curses.COLS - 1) / 2) # City + state column
@@ -26,6 +29,7 @@ def displayStats(stdscr, data, cursorY):
 
 		if cursorY == i + 2:
 			highlightColor = curses.color_pair(2)
+			businessID = ID
 		else:
 			highlightColor = curses.color_pair(1)
 
@@ -35,21 +39,35 @@ def displayStats(stdscr, data, cursorY):
 
 		i += 1
 
-	return ID
+	return businessID
 
 
-def printReviews(stdscr, businessID):
+def printReviews(stdscr, businessID, cursorY):
 	try:
+		stdscr.clear()
+
 		col1 = 0
 		col2 = int((curses.COLS - 1) / 5)
 
 		with open("reviews.json", "r") as file:
 			reviewData = json.loads(file.read())
 
+		businessReviews = reviewData.get(businessID)
+		if businessReviews is None:
+			stdscr.addstr(2, 0, "No reviews present.")
+			return
+
+
 		i = 0
-		for user, review in reviewData[businessID].items():
-			stdscr.addstr(i + 2, col1, user)
-			stdscr.addstr(i + 2, col2, review)
+		for user, review in businessReviews.items():
+			if cursorY == i + 2:
+				highlightColor = curses.color_pair(2)
+			else:
+				highlightColor = curses.color_pair(1)
+
+			stdscr.addstr(i + 2, col1, user, highlightColor)
+			stdscr.addstr(i + 2, col2, review[0] + " star(s)", highlightColor)
+			stdscr.addstr(i + 2, 2 * col2, review[1], highlightColor)
 
 			i += 1
 	except Exception as err:
@@ -57,7 +75,7 @@ def printReviews(stdscr, businessID):
 
 
 def handleUserInput(ch, windowID, cursorY):
-	if ch == curses.KEY_UP and cursorY > 2:
+	if ch == curses.KEY_UP and (cursorY > 2 and windowID == 0) or (cursorY > 1 and windowID == 1):
 		cursorY -= 1
 	elif ch == curses.KEY_DOWN and cursorY < curses.LINES - 1:
 		cursorY += 1
@@ -65,6 +83,8 @@ def handleUserInput(ch, windowID, cursorY):
 		windowID = 1
 	elif ch == 27 and windowID == 1:
 		windowID = 0
+	elif ch == (10 or 13) and windowID == 1 and cursorY == 1:
+		makeReview()
 
 	return windowID, cursorY
 
@@ -74,7 +94,7 @@ def manageWindow(stdscr, cursorY, windowID, data, businessID):
 	if windowID == 0:
 		businessID = displayStats(stdscr, data, cursorY)
 	elif windowID == 1:
-		printReviews(stdscr, businessID)
+		printReviews(stdscr, businessID, cursorY)
 
 	return businessID
 

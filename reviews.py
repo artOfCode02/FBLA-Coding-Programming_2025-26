@@ -9,6 +9,9 @@ def writeReview(user, businessID):
     stars = input("Rate our business (1-5): ")
     review = input("Leave a review: ")
 
+    if reviewData is None:
+        return
+
     userReview = {f"{user.username}": [f"{stars}", f"{review}"]}
     
     reviewData[businessID] = userReview
