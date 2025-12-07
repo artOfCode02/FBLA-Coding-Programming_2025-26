@@ -1,11 +1,10 @@
+from pyexpat import features
 import pip._vendor.requests as requests
 from initBase import User
 import reviews
 import curses
 import json
 from curses import wrapper
-
-import window
 
 API_KEY = "fdcb2789a931407f84d539feaf6621fb"
 url = "https://api.geoapify.com/v2/places"
@@ -52,41 +51,83 @@ def printReviews(stdscr, businessID, cursorY):
 		with open("reviews.json", "r") as file:
 			reviewData = json.loads(file.read())
 
+		if (cursorY == 0):
+			stdscr.addstr(0, 0, "Press here to move back.", curses.color_pair(2))
+		else:
+			stdscr.addstr(0, 0, "Press here to move back.", curses.color_pair(1))
+
+		if (cursorY == 1):
+			stdscr.addstr(1, 0, "Enter review here. >>", curses.color_pair(2))
+		else:
+			stdscr.addstr(1, 0, "Enter review here. >>", curses.color_pair(1))
+
 		businessReviews = reviewData.get(businessID)
 		if businessReviews is None:
-			stdscr.addstr(2, 0, "No reviews present.")
+			if (cursorY == 2):
+				stdscr.addstr(2, 0, "No reviews present.", curses.color_pair(2))
+			else:
+				stdscr.addstr(2, 0, "No reviews present.", curses.color_pair(1))
 			return
 
 
 		i = 0
 		for user, review in businessReviews.items():
-			if cursorY == i + 2:
-				highlightColor = curses.color_pair(2)
-			else:
-				highlightColor = curses.color_pair(1)
-
-			stdscr.addstr(i + 2, col1, user, highlightColor)
-			stdscr.addstr(i + 2, col2, review[0] + " star(s)", highlightColor)
-			stdscr.addstr(i + 2, 2 * col2, review[1], highlightColor)
+			stdscr.addstr(i + 2, col1, user)
+			stdscr.addstr(i + 2, col2, review[0] + " star(s)")
+			stdscr.addstr(i + 2, 2 * col2, review[1])
 
 			i += 1
 	except Exception as err:
 		raise err
 
 
-def handleUserInput(ch, windowID, cursorY):
-	if ch == curses.KEY_UP and (cursorY > 2 and windowID == 0) or (cursorY > 1 and windowID == 1):
-		cursorY -= 1
-	elif ch == curses.KEY_DOWN and cursorY < curses.LINES - 1:
-		cursorY += 1
-	elif ch == (10 or 13) and windowID == 0:
-		windowID = 1
-	elif ch == 27 and windowID == 1:
-		windowID = 0
-	elif ch == (10 or 13) and windowID == 1 and cursorY == 1:
-		makeReview()
+def makeReview(stdscr, user, businessID, cursorY):
+	stdscr.move(1, 0)
+	stdscr.clrtoeol()
 
-	return windowID, cursorY
+	stars = ""
+	userReview = ""
+
+	curses.echo()
+	
+	string = ""
+	char = stdscr.getch()
+
+	stdscr.move(1, 17)
+	while char != (10 or 13):
+		stdscr.addstr(1, 0, "How many stars?: ")
+		
+	
+	stdscr.clrtoeol()
+	stdscr.addstr(1, 0, "How many stars?: ")
+	stdscr.getstr(stars)
+
+	curses.noecho()
+
+	reviews.writeReview(user, businessID, stars, userReview)
+
+
+
+def handleUserInput(stdscr, ch, windowID, cursorY, data, user, businessID):
+	quitProgram = False
+
+	if ch == curses.KEY_UP and (cursorY > 2 and windowID == 0) or (cursorY > 0 and windowID == 1): # Move cursor up
+		cursorY -= 1
+	elif ch == curses.KEY_DOWN and ((windowID == 0 and cursorY < (curses.LINES - 1 and len(data["features"]) + 1)) or (windowID == 1 and cursorY < 1)): # Move cursor down
+		cursorY += 1
+	elif ch == (10 or 13) and windowID == 0: # Switch to review window
+		cursorY = 1
+		windowID = 1
+	elif ch == (10 or 13) and cursorY == 0 and windowID == 1: # Switch back to main window
+		cursorY = 2
+		windowID = 0
+	elif ch == (10 or 13) and windowID == 1 and cursorY == 1: # Make a review on the review window
+		cursorY = 1
+		makeReview(stdscr, user, businessID, cursorY)
+	elif ch == 81:
+		quitProgram = True
+
+	return windowID, cursorY, quitProgram
 
 
 
@@ -97,10 +138,6 @@ def manageWindow(stdscr, cursorY, windowID, data, businessID):
 		printReviews(stdscr, businessID, cursorY)
 
 	return businessID
-
-
-	
-
 
 
 
@@ -135,8 +172,9 @@ def main():
 	businessID = displayStats(stdscr, data, cursorY)
 	stdscr.refresh()
 	ch = stdscr.getch()
-	while ch != 81:
-		windowID, cursorY = handleUserInput(ch, windowID, cursorY)
+	quitProgram = False
+	while not(ch == 81 or quitProgram):
+		windowID, cursorY, quitProgram = handleUserInput(stdscr, ch, windowID, cursorY, data, user, businessID)
 		businessID = manageWindow(stdscr, cursorY, windowID, data, businessID)
 		stdscr.refresh()
 

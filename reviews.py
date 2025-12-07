@@ -2,15 +2,9 @@ import json
 from initBase import User
 
 
-def writeReview(user, businessID):
+def writeReview(user, businessID, stars, review):
     with open("reviews.json", "r") as file:
         reviewData = json.loads(file.read())
-    
-    stars = input("Rate our business (1-5): ")
-    review = input("Leave a review: ")
-
-    if reviewData is None:
-        return
 
     userReview = {f"{user.username}": [f"{stars}", f"{review}"]}
     
