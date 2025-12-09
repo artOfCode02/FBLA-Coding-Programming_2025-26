@@ -12,4 +12,4 @@ t.start()
 
 # Open desktop window showing your website
 webview.create_window("Local Review App", "http://127.0.0.1:5000")
-webview.start(debug=True)
+webview.start()
