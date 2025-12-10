@@ -1,46 +1,42 @@
 @echo off
 setlocal enabledelayedexpansion
 
-:: =========================================
-:: Setup directories
-:: =========================================
-set PYDIR=%USERPROFILE%\PythonUser
+:: ----------------------------
+:: Project-local Python folder
+:: ----------------------------
+set PYDIR=%CD%\PythonUser
 set PYEXE=%PYDIR%\python.exe
-set PYURL=https://www.python.org/ftp/python/3.12.3/python-3.12.3-embed-amd64.zip
 set PYZIP=python_embed.zip
+set PYURL=https://www.python.org/ftp/python/3.12.3/python-3.12.3-embed-amd64.zip
 
-:: =========================================
-:: Check for local Python (no admin)
-:: =========================================
+:: ----------------------------
+:: Download Python if missing
+:: ----------------------------
 if not exist "%PYEXE%" (
-    echo Local Python not found. Downloading...
-    powershell -ExecutionPolicy Bypass -Command ^
-        "Invoke-WebRequest '%PYURL%' -OutFile '%PYZIP%'"
+    echo Downloading Python (no admin required)...
+    powershell -Command "Invoke-WebRequest '%PYURL%' -OutFile '%PYZIP%'"
 
-    echo Extracting...
-    powershell -ExecutionPolicy Bypass -Command ^
-        "Expand-Archive '%PYZIP%' '%PYDIR%' -Force"
+    echo Extracting Python...
+    powershell -Command "Expand-Archive '%PYZIP%' '%PYDIR%' -Force"
 
     del "%PYZIP%"
 
     echo Installing pip...
-    powershell -ExecutionPolicy Bypass -Command ^
-        "Invoke-WebRequest 'https://bootstrap.pypa.io/get-pip.py' -OutFile '%PYDIR%\get-pip.py'"
-
+    powershell -Command "Invoke-WebRequest 'https://bootstrap.pypa.io/get-pip.py' -OutFile '%PYDIR%\get-pip.py'"
     "%PYEXE%" "%PYDIR%\get-pip.py"
 )
 
-:: =========================================
-:: Ensure venv exists
-:: =========================================
+:: ----------------------------
+:: Create venv if missing
+:: ----------------------------
 if not exist "venv" (
     echo Creating virtual environment...
     "%PYEXE%" -m venv venv
 )
 
-:: =========================================
+:: ----------------------------
 :: MENU LOOP
-:: =========================================
+:: ----------------------------
 :MENU
 cls
 echo -------------------------------
@@ -60,31 +56,38 @@ if "%choice%"=="4" exit /b
 
 goto MENU
 
-:: =========================================
-:: Install dependencies
-:: =========================================
+:: ----------------------------
+:: Run App
+:: ----------------------------
+:RUN
+if not exist "venv\Scripts\activate.bat" (
+    echo ERROR: venv missing! Rebuilding...
+    goto REBUILD
+)
+call venv\Scripts\activate.bat
+python run_app.py
+pause
+goto MENU
+
+:: ----------------------------
+:: Install/Repair Dependencies
+:: ----------------------------
 :INSTALL
 call venv\Scripts\activate.bat
-
-echo Installing required packages...
+pip install --upgrade pip
 pip install flask requests pywebview
-
 pause
 goto MENU
 
-:: =========================================
+:: ----------------------------
 :: Rebuild venv
-:: =========================================
+:: ----------------------------
 :REBUILD
-echo Rebuilding venv...
+echo Rebuilding virtual environment...
 rmdir /s /q venv
-
 "%PYEXE%" -m venv venv
 call venv\Scripts\activate.bat
+pip install --upgrade pip
 pip install flask requests pywebview
-
 pause
 goto MENU
-
-:: =========================================
-:: Run ap
