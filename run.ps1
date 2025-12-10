@@ -26,7 +26,7 @@ function Install-Python {
     & "$PythonExe" "$LocalPythonDir\get-pip.py"
     Remove-Item "$LocalPythonDir\get-pip.py"
 
-    Write-Host "Python installed locally."
+    Write-Host "Python installed locally at $LocalPythonDir."
 }
 
 # -------------------------
@@ -39,18 +39,21 @@ if (-not (Test-Path $PythonExe)) {
 }
 
 # -------------------------
-# Create virtual environment if missing
+# Function: Create venv if missing
 # -------------------------
-if (-not (Test-Path $VenvDir)) {
-    Write-Host "Creating virtual environment..."
-    & "$PythonExe" -m venv "$VenvDir"
-    Write-Host "Virtual environment created."
+function Ensure-Venv {
+    if (-not (Test-Path $VenvDir)) {
+        Write-Host "Creating virtual environment..."
+        & "$PythonExe" -m venv $VenvDir
+        Write-Host "Virtual environment created."
+    }
 }
 
 # -------------------------
 # Function: Install dependencies
 # -------------------------
 function Install-Dependencies {
+    Ensure-Venv
     Write-Host "Installing/upgrading pip and packages..."
     & "$VenvDir\Scripts\python.exe" -m pip install --upgrade pip
     & "$VenvDir\Scripts\python.exe" -m pip install flask requests pywebview
@@ -62,8 +65,11 @@ function Install-Dependencies {
 # Function: Rebuild venv
 # -------------------------
 function Rebuild-Venv {
-    Write-Host "Rebuilding virtual environment..."
-    Remove-Item -Recurse -Force $VenvDir
+    if (Test-Path $VenvDir) {
+        Write-Host "Deleting existing virtual environment..."
+        Remove-Item -Recurse -Force $VenvDir
+    }
+    Write-Host "Creating new virtual environment..."
     & "$PythonExe" -m venv $VenvDir
     Install-Dependencies
 }
@@ -72,6 +78,7 @@ function Rebuild-Venv {
 # Function: Run the app
 # -------------------------
 function Run-App {
+    Ensure-Venv
     if (-not (Test-Path "$VenvDir\Scripts\python.exe")) {
         Write-Host "venv missing! Rebuilding..."
         Rebuild-Venv
