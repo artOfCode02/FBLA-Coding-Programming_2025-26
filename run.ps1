@@ -39,74 +39,26 @@ if (-not (Test-Path $PythonExe)) {
 }
 
 # -------------------------
-# Function: Create venv if missing
+# Ensure venv exists
 # -------------------------
-function Ensure-Venv {
-    if (-not (Test-Path $VenvDir)) {
-        Write-Host "Creating virtual environment..."
-        & "$PythonExe" -m venv $VenvDir
-        Write-Host "Virtual environment created."
-    }
-}
-
-# -------------------------
-# Function: Install dependencies
-# -------------------------
-function Install-Dependencies {
-    Ensure-Venv
-    Write-Host "Installing/upgrading pip and packages..."
-    & "$VenvDir\Scripts\python.exe" -m pip install --upgrade pip
-    & "$VenvDir\Scripts\python.exe" -m pip install flask requests pywebview
-    Write-Host "Dependencies installed."
-    Pause
-}
-
-# -------------------------
-# Function: Rebuild venv
-# -------------------------
-function Rebuild-Venv {
-    if (Test-Path $VenvDir) {
-        Write-Host "Deleting existing virtual environment..."
-        Remove-Item -Recurse -Force $VenvDir
-    }
-    Write-Host "Creating new virtual environment..."
+if (-not (Test-Path $VenvDir)) {
+    Write-Host "Creating virtual environment..."
     & "$PythonExe" -m venv $VenvDir
-    Install-Dependencies
+    Write-Host "Virtual environment created."
 }
 
 # -------------------------
-# Function: Run the app
+# Install dependencies
 # -------------------------
-function Run-App {
-    Ensure-Venv
-    if (-not (Test-Path "$VenvDir\Scripts\python.exe")) {
-        Write-Host "venv missing! Rebuilding..."
-        Rebuild-Venv
-    }
-    & "$VenvDir\Scripts\python.exe" "$ProjectDir\run_app.py"
-    Pause
-}
+Write-Host "Installing/upgrading pip and required packages..."
+& "$VenvDir\Scripts\python.exe" -m pip install --upgrade pip
+& "$VenvDir\Scripts\python.exe" -m pip install flask requests pywebview
+Write-Host "Dependencies installed."
 
 # -------------------------
-# Menu loop
+# Run the app
 # -------------------------
-while ($true) {
-    Clear-Host
-    Write-Host "-------------------------------------"
-    Write-Host "            APP MENU"
-    Write-Host "-------------------------------------"
-    Write-Host "1. Run App"
-    Write-Host "2. Install/Repair Dependencies"
-    Write-Host "3. Rebuild Virtual Environment"
-    Write-Host "4. Exit"
-    Write-Host "-------------------------------------"
-    $choice = Read-Host "Choose 1-4"
-
-    switch ($choice) {
-        "1" { Run-App }
-        "2" { Install-Dependencies }
-        "3" { Rebuild-Venv }
-        "4" { break }
-        default { Write-Host "Invalid choice. Try again."; Pause }
-    }
-}
+Write-Host "Launching your app..."
+& "$VenvDir\Scripts\python.exe" "$ProjectDir\run_app.py"
+Write-Host "App closed."
+Pause
