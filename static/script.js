@@ -1,6 +1,3 @@
-let username;
-let business_category;
-
 /* SUBMIT INIT FORM */
 document.addEventListener('DOMContentLoaded', function () {
     console.log("DOM READY");
@@ -12,10 +9,12 @@ document.addEventListener('DOMContentLoaded', function () {
     if(initForm) {
         console.log("Init form exists, attaching listener");
 
+        // Submit init form @ index.html
         initForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             console.log("Init form submitted");
 
+            // Get captcha response
             const captcha = grecaptcha.getResponse();
             if(!captcha) {
                 event.preventDefault();
@@ -54,6 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if(loadBusinessesButton && businessesTable) {
         console.log("Businesses table and load button exist, attaching listener");
 
+        // Load businesses @ businesses.html
         loadBusinessesButton.addEventListener('click', async function () {
             console.log("Load Businesses button clicked");
 
@@ -118,6 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
         write_username.innerHTML = urlParams.get('username')
     }
 
+    // Write review @ review.html
     const reviewForm = document.getElementById('writeReview');
     if(reviewForm) {
         console.log("Review form exists, attaching listener");
@@ -167,6 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log("Review form NOT found on this page");
     }
 
+    // Load reviews @ reviews.html
     const loadReviewsButton = document.getElementById('load_reviews');
     const reviewsTable = document.getElementById('reviews_table');
     if(loadReviewsButton && reviewsTable) {
@@ -210,6 +212,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Back button @ review.html
     const backButton = document.getElementById('redirect_back');
     if(backButton) {
         backButton.addEventListener('click', function () {
@@ -240,8 +243,10 @@ async function getLocationFromIP() {
     }
 }
 
+// Geoapify api key
 const API_KEY = "fdcb2789a931407f84d539feaf6621fb";
 
+// Get places from Geoapify
 async function getPlaces() {
     const {lat, lon} = await getLocationFromIP()
     console.log(lat, lon);

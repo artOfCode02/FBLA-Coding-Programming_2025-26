@@ -15,7 +15,7 @@ t = threading.Thread(target=start_flask)
 t.daemon = True
 t.start()
 
-# Start the aplicatioin
+# Start the application
 Qapp = QApplication(sys.argv)
 view = QWebEngineView()
 view.load(QUrl("http://127.0.0.1:5000"))
