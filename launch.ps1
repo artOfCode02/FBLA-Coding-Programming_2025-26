@@ -12,7 +12,7 @@ $PythonURL = "https://www.python.org/ftp/python/3.12.3/python-3.12.3-embed-amd64
 $VenvDir = "$ProjectDir\venv"
 
 # -------------------------
-# Function: Install local Python if missing
+# Function: Install Python locally
 # -------------------------
 function Install-Python {
     Write-Host "Python not found. Downloading local Python..."
@@ -26,7 +26,7 @@ function Install-Python {
     & "$PythonExe" "$LocalPythonDir\get-pip.py"
     Remove-Item "$LocalPythonDir\get-pip.py"
 
-    Write-Host "Python installed locally at $LocalPythonDir."
+    Write-Host "Python installed locally at $LocalPythonDir"
 }
 
 # -------------------------
@@ -39,18 +39,19 @@ if (-not (Test-Path $PythonExe)) {
 }
 
 # -------------------------
-# Ensure venv exists
+# Create venv if missing
 # -------------------------
 if (-not (Test-Path $VenvDir)) {
     Write-Host "Creating virtual environment..."
-    & "$PythonExe" -m venv $VenvDir
-    Write-Host "Virtual environment created."
+    & "$PythonExe" -m venv --copies $VenvDir
+    & "$VenvDir\Scripts\python.exe" -m ensurepip --upgrade
+    Write-Host "Virtual environment created at $VenvDir"
 }
 
 # -------------------------
 # Install dependencies
 # -------------------------
-Write-Host "Installing/upgrading pip and required packages..."
+Write-Host "Installing dependencies..."
 & "$VenvDir\Scripts\python.exe" -m pip install --upgrade pip
 & "$VenvDir\Scripts\python.exe" -m pip install flask requests pywebview
 Write-Host "Dependencies installed."
