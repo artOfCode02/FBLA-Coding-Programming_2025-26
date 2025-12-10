@@ -6,6 +6,7 @@ import sys
 import threading
 from app import app
 
+# Start Flask, used to connect javascript with python
 def start_flask():
     app.run()
 
@@ -14,6 +15,7 @@ t = threading.Thread(target=start_flask)
 t.daemon = True
 t.start()
 
+# Start the aplicatioin
 Qapp = QApplication(sys.argv)
 view = QWebEngineView()
 view.load(QUrl("http://127.0.0.1:5000"))
