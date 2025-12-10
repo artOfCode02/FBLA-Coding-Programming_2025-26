@@ -1,9 +1,0 @@
-###########
-HOW TO RUN:
-
-make sure that flask is installed:
-run 'pip install flask'
-
-If on mac:
-open terminal
-run ''
