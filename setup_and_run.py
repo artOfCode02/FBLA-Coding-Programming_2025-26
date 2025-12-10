@@ -35,7 +35,7 @@ python_exe = os.path.join(
 # -----------------------------
 print("Installing dependencies...")
 subprocess.check_call([python_exe, "-m", "pip", "install", "--upgrade", "pip"])
-subprocess.check_call([python_exe, "-m", "pip", "install", "flask", "requests", "pywebview"])
+subprocess.check_call([python_exe, "-m", "pip", "install", "flask", "requests", "pyqt5", "pyqtwebengine"])
 
 print("Dependencies installed.")
 

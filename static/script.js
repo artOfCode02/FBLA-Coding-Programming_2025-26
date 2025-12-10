@@ -130,8 +130,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const username = urlParams.get('username') || "Anonymous";
             const businessID = urlParams.get('businessID');
 
-            const stars = document.querySelector('input[name="rating"]:checked')?.value;
-            const review = document.getElementById('user_review')?.value;
+            const stars = document.querySelector('input[name="rating"]:checked').value;
+            const review = document.getElementById('user_review').value;
+
 
             console.log("Review form values:", { username, businessID, stars, review });
 
@@ -148,9 +149,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     body: JSON.stringify({ businessID, username, stars, review })
                 });
 
+                if (!response.ok) {
+                    const errorBody = await response.text();
+                    // Throw an error that includes the HTTP status code
+                    throw new Error(`Server returned status ${response.status}. Response body: ${errorBody}`);
+                }
+
                 const result = await response.json();
                 console.log("Server response:", result);
-                alert(result.message);
 
             } catch (err) {
                 console.error("Error sending review to server:", err);

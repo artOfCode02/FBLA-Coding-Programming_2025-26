@@ -39,6 +39,46 @@ def businesses():
 def reviews():
     return render_template("reviews.html")
 
+@app.route("/save-review", methods=['POST'])
+def save_review():
+    if request.is_json:
+        data = request.get_json()
+
+        businessID = data.get('businessID')
+        username = data.get('username')
+        stars = data.get('stars')
+        review = data.get('review')
+
+        #Form validation
+        if not all([businessID, stars, review]):
+            return jsonify({
+                "success": False,
+                "message": "Missing required fields (businessID, stars, or review)."
+            }), 400
+
+        reviewData = load_reviews()
+
+        if not businessID in reviewData:
+            reviewData[businessID] = {}
+
+        if not username in reviewData[businessID]:
+            reviewData[businessID][username] = []
+
+
+        reviewData[businessID][username].append([stars, review])
+
+        save_reviews(reviewData)
+
+        # Message success
+        return jsonify({
+            "success": True,
+            "message": "Review saved successfully!",
+            "received_id": businessID
+        }), 200
+    else:
+        # Body not JSON
+        return jsonify({"success": False, "message": "Request body must be JSON"}), 400
+
 SECRET_KEY = "6LdOWCYsAAAAAEpCKUp6SV-tXZ-J3ecTFFzOfm_6"
 
 @app.route("/initCaptcha", methods=["POST"])
