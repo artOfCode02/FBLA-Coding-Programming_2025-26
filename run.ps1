@@ -4,10 +4,12 @@ $ErrorActionPreference = "Stop"
 # -------------------------
 # Paths
 # -------------------------
-$LocalPythonDir = "$PSScriptRoot\PythonUser"
+$ProjectDir = $PSScriptRoot
+$LocalPythonDir = "$ProjectDir\PythonUser"
 $PythonExe = "$LocalPythonDir\python.exe"
-$PythonZip = "$PSScriptRoot\python_embed.zip"
+$PythonZip = "$ProjectDir\python_embed.zip"
 $PythonURL = "https://www.python.org/ftp/python/3.12.3/python-3.12.3-embed-amd64.zip"
+$VenvDir = "$ProjectDir\venv"
 
 # -------------------------
 # Function: Install local Python if missing
@@ -18,10 +20,12 @@ function Install-Python {
     Write-Host "Extracting Python..."
     Expand-Archive -Path $PythonZip -DestinationPath $LocalPythonDir -Force
     Remove-Item $PythonZip
+
     Write-Host "Installing pip..."
     Invoke-WebRequest -Uri "https://bootstrap.pypa.io/get-pip.py" -OutFile "$LocalPythonDir\get-pip.py"
     & "$PythonExe" "$LocalPythonDir\get-pip.py"
     Remove-Item "$LocalPythonDir\get-pip.py"
+
     Write-Host "Python installed locally."
 }
 
@@ -37,9 +41,10 @@ if (-not (Test-Path $PythonExe)) {
 # -------------------------
 # Create virtual environment if missing
 # -------------------------
-if (-not (Test-Path "$PSScriptRoot\venv")) {
+if (-not (Test-Path $VenvDir)) {
     Write-Host "Creating virtual environment..."
-    & "$PythonExe" -m venv "$PSScriptRoot\venv"
+    & "$PythonExe" -m venv "$VenvDir"
+    Write-Host "Virtual environment created."
 }
 
 # -------------------------
@@ -47,8 +52,8 @@ if (-not (Test-Path "$PSScriptRoot\venv")) {
 # -------------------------
 function Install-Dependencies {
     Write-Host "Installing/upgrading pip and packages..."
-    & "$PSScriptRoot\venv\Scripts\python.exe" -m pip install --upgrade pip
-    & "$PSScriptRoot\venv\Scripts\python.exe" -m pip install flask requests pywebview
+    & "$VenvDir\Scripts\python.exe" -m pip install --upgrade pip
+    & "$VenvDir\Scripts\python.exe" -m pip install flask requests pywebview
     Write-Host "Dependencies installed."
     Pause
 }
@@ -58,8 +63,8 @@ function Install-Dependencies {
 # -------------------------
 function Rebuild-Venv {
     Write-Host "Rebuilding virtual environment..."
-    Remove-Item -Recurse -Force "$PSScriptRoot\venv"
-    & "$PythonExe" -m venv "$PSScriptRoot\venv"
+    Remove-Item -Recurse -Force $VenvDir
+    & "$PythonExe" -m venv $VenvDir
     Install-Dependencies
 }
 
@@ -67,11 +72,11 @@ function Rebuild-Venv {
 # Function: Run the app
 # -------------------------
 function Run-App {
-    if (-not (Test-Path "$PSScriptRoot\venv\Scripts\python.exe")) {
+    if (-not (Test-Path "$VenvDir\Scripts\python.exe")) {
         Write-Host "venv missing! Rebuilding..."
         Rebuild-Venv
     }
-    & "$PSScriptRoot\venv\Scripts\python.exe" "$PSScriptRoot\run_app.py"
+    & "$VenvDir\Scripts\python.exe" "$ProjectDir\run_app.py"
     Pause
 }
 
