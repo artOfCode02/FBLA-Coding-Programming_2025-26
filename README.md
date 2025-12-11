@@ -17,3 +17,7 @@ python setup_and_run.py
 
 
    
+### Credits
+David Banyeretse
+Fischer Reed
+Ah'mir McCray
