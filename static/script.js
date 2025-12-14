@@ -33,8 +33,13 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log(data);
 
 
-            let username = document.getElementById('username')?.value || "Anonymous";
-            let business_category = document.getElementById('business_category')?.value || "General";
+            const username = document.getElementById('username').value;
+            const business_category = document.getElementById('business_category').value;
+
+            if (username === "" || business_category === "") {
+                alert("Invalid input, try again.");
+                return;
+            }
 
             console.log("Username:", username, "Category:", business_category);
 
@@ -128,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log("Review form submitted");
 
             const urlParams = new URLSearchParams(window.location.search);
-            const username = urlParams.get('username') || "Anonymous";
+            const username = urlParams.get('username');
             const businessID = urlParams.get('businessID');
 
             const stars = document.querySelector('input[name="rating"]:checked').value;
@@ -140,6 +145,11 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!stars || !review) {
                 alert("Invalid input, try again.");
                 console.warn("Stars or review missing");
+                return;
+            }
+
+            const confirmation = confirm("Submit Review?");
+            if (!confirmation) {
                 return;
             }
 
@@ -198,7 +208,24 @@ document.addEventListener('DOMContentLoaded', function () {
                     newRow.appendChild(colUser);
 
                     const colStars = document.createElement("td");
-                    colStars.textContent = r[0];
+                    const stars = r[0];
+                    switch (stars) {
+                        case "1":
+                            colStars.textContent = "★ ☆ ☆ ☆ ☆";
+                            break;
+                        case "2":
+                            colStars.textContent = "★ ★ ☆ ☆ ☆";
+                            break;
+                        case "3":
+                            colStars.textContent = "★ ★ ★ ☆ ☆";
+                            break;
+                        case "4":
+                            colStars.textContent = "★ ★ ★ ★ ☆";
+                            break;
+                        case "5":
+                            colStars.textContent = "★ ★ ★ ★ ★";
+                            break;
+                    }
                     newRow.appendChild(colStars);
 
                     const colReview = document.createElement("td");
@@ -263,21 +290,33 @@ async function getPlaces() {
         return data.features.map(places => {
             const props = places.properties;
 
-            let city = props.city || "";
-            let state = props.state || "";
+            let city = props.city;
+            let state = props.state;
+
+            if (city === "" || state === "") {
+                return;
+            }
 
             let region = city + ", " + state;
 
+            if(
+                props.place_id === "" ||
+                props.name === "" ||
+                props.street === ""
+            ) {
+                return;
+            }
+
             let business = {
-                id: props.place_id || "",
-                name: props.name || "",
-                street: props.street || "",
+                id: props.place_id,
+                name: props.name,
+                street: props.street,
                 city: region
             };
             console.log(business);
 
             return business;
-        })
+        });
     } catch (err) {
         console.error("Error: ", err)
     }

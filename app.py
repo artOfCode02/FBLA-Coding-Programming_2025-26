@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 REVIEWS_FILE = 'reviews.json'
 
-# Load reveiws from reviews.json
+# Load reviews from reviews.json
 def load_reviews():
     if os.path.exists(REVIEWS_FILE):
         with open(REVIEWS_FILE, 'r') as f:

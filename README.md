@@ -6,13 +6,13 @@ Make sure that python is installed and working.
 
 To verify run in your terminal:
 ```bash
-python --version
+python3 --version
 ```
 
 ## Run project
 To run project, run:
-```
-python setup_and_run.py
+```bash
+python3 setup_and_run.py
 ```
 
 

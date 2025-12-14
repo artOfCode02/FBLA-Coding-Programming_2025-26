@@ -4,23 +4,30 @@
     <title>FBLA Coding & Programming</title>
     <script src="{{ url_for('static', filename='script.js') }}" defer></script>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 <form id="userDetails" >
     <label for="username">Username: </label>
-    <input type="text" id="username" name="username">
+    <input type="text" id="username" name="username" value="Anonymous">
     <br>
     <label for="business_category"> Business Category: </label>
     <select id="business_category" name="business_category">
+        <option value="">-- SELECT TYPE --</option>
         <optgroup label="Commercial">
-            <option value="commercial">General</option>
+            <option value="commercial">General Commercial</option>
             <option value="commercial.clothing">Clothing</option>
             <option value="commercial.hobby">Hobby</option>
             <option value="commercial.health_and_beauty">Health & Beauty</option>
             <option value="commercial.elektronics">Electronics</option>
         </optgroup>
-        <option value="catering">Food</option>
-        <option value="retail">Retail</option>
+        <optgroup label="Catering">
+            <option value="catering.bar">Bars</option>
+            <option value="catering.cafe">Cafés</option>
+            <option value="catering.fast_food">Fast Food</option>
+            <option value="catering.ice_cream">Ice Cream</option>
+            <option value="catering.restaurant">Restaurants</option>
+        </optgroup>
     </select>
     <br>
     <div class="g-recaptcha" id="init_recaptcha" data-sitekey="6LdOWCYsAAAAAHZWOLTyH5LuRUJUdxkHGYyMQfL6"></div>

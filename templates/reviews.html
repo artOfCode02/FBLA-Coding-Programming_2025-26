@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <title>Reviews</title>
     <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 <button id="redirect_back">&lt;&lt; Back to Businesses</button>
 <form id="writeReview">
     <p>Writing review as <b id="write_username"></b>.</p>
-    <br>
     <p>Rate Us:
         <label>
             <input type="radio" name="rating" value="1">

@@ -3,18 +3,12 @@
 <head>
     <title>List of businesses</title>
     <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+<button id="user_reset">&lt;&lt;Reset User Credentials & Business Type</button>
 <h1>Businesses:</h1>
 <button id="loadBusinesses">Load Nearby Businesses</button>
-<table id="businesses_table">
-    <tr>
-        <th>Name</th>
-        <th>Address</th>
-        <th>City</th>
-        <th>Access reviews</th>
-    </tr>
-
-</table>
+<table id="businesses_table"><tbody></tbody></table>
 </body>
 </html>
