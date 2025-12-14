@@ -50,6 +50,18 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log("Init form NOT found on this page");
     }
 
+    // ------------------------
+    // User reset
+    // ------------------------
+
+    const userReset = document.getElementById('user_reset');
+    if (userReset) {
+        console.log("User reset button exists");
+        userReset.addEventListener('click', function () {
+            window.location.href = "/";
+        });
+    }
+
     // -------------------------
     // Businesses Table Listener
     // -------------------------
