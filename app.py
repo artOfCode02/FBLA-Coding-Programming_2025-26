@@ -119,9 +119,9 @@ def initCaptcha():
 
     # If captcha is not successful
     if not result.get("success"):
-        return jsonify({"success": False, "message": "Captcha failed."})
+        return jsonify({"success": False, "message": "Captcha failed."}), 400
 
-    return jsonify({"success": True, "message": "Captcha passed!"})
+    return jsonify({"success": True, "message": "Captcha passed!"}), 200
 
 
 

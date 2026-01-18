@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>List of businesses</title>
-    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+    <script type="module" src="{{ url_for('static', filename='script.js') }}" defer></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -10,5 +10,16 @@
 <h1>Businesses:</h1>
 <button id="loadBusinesses">Load Nearby Businesses</button>
 <table id="businesses_table"><tbody></tbody></table>
+<footer>
+    <p>Developed by David Banyeretse, Fischer Reed, and Ah'mir McCray for FBLA Coding & Programming 2025-26.</p>
+    <p>Data provided by Geoapify.</p>
+</footer>
+<nav id="change_username_nav">
+    <form>
+        <label for="change_username_input">Change Username: </label>
+        <input type="text" id="change_username_input" name="change_username_input" value="Anonymous" required>
+        <button id="change_username_button" type="button">Change Username</button>
+    </form>
+</nav>
 </body>
 </html>
