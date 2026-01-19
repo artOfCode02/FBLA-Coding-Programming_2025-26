@@ -85,10 +85,10 @@ export function make_reviews_table() {
             const data = await response.json();
 
             reviewsTable.innerHTML = "<tr>\n" +
-                "        <th>Username</th>\n" +
-                "        <th>Stars</th>\n" +
-                "        <th>Review</th>\n" +
-                "    </tr>"
+                "                     <th>Username</th>\n" +
+                "                     <th>Stars</th>\n" +
+                "                     <th>Review</th>\n" +
+                "                     </tr>"
 
             for(const username in data) {
                 const userReviews = data[username];
@@ -142,9 +142,8 @@ export function back_button_handler() {
         backButton.addEventListener('click', function () {
             const urlParams = new URLSearchParams(window.location.search);
             const username = encodeURIComponent(urlParams.get('username'));
-            const category = encodeURIComponent(urlParams.get('category'));
 
-            window.location.href = `/businesses?username=${username}&category=${category}`;
+            window.location.href = `/businesses?username=${username}`;
         });
     }
 }

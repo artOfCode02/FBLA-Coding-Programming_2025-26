@@ -1,11 +1,11 @@
 // ---------------------------
 // Import Important Functions
 // ---------------------------
-import { index_form_handler } from "./index.js";
+import { index_form_handler } from "./js/index.js";
 
-import { make_businesses_table } from "./businesses.js";
+import { make_businesses_table, change_username_handler } from "./js/businesses.js";
 
-import { review_title, review_form_handler, make_reviews_table  } from "./reviews.js";
+import { review_title, review_form_handler, make_reviews_table } from "./js/reviews.js";
 
 // Ensure document is ready before processing
 document.addEventListener('DOMContentLoaded', function () {
@@ -21,6 +21,8 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log("On businesses page");
             // Call businesses table handler
             make_businesses_table();
+            // Call change username handler
+            change_username_handler();
             break;
         case '/reviews':
             console.log("On reviews page");

@@ -1,6 +1,6 @@
 /* Import styles from index.css */
-@import url('./index.css');
-@import url('./businesses.css');
+@import url('css/index.css');
+@import url('css/businesses.css');
 
 
 /* http://meyerweb.com/eric/tools/css/reset/ 
