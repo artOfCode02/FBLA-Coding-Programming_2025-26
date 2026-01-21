@@ -1,11 +1,23 @@
-// write a line in format "<h1>Review for {username}</h1>" where {username} is the username from the URL params
+// CONSTANTS
+// URL parameters
+const urlParams = new URLSearchParams(window.location.search);
+const username = urlParams.get('username');
+const businessID = urlParams.get('businessID');
+const businessName = urlParams.get('businessName');
+
+
+// write a line in format "<h1>Writing review as {username} for {businessName}</h1>" where {username} is the username from the URL params
 export function review_title() {
     console.log("Running review title function");
 
-    const urlParams = new URLSearchParams(window.location.search);
     const write_username = document.getElementById('write_username');
     if(write_username) {
-        write_username.innerHTML = urlParams.get('username')
+        write_username.innerHTML = username
+    }
+
+    const write_business_name = document.getElementById('write_business_name');
+    if(write_business_name) {
+        write_business_name.innerHTML = businessName
     }
 }
 
@@ -21,13 +33,8 @@ export function review_form_handler() {
             event.preventDefault();
             console.log("Review form submitted");
 
-            const urlParams = new URLSearchParams(window.location.search);
-            const username = urlParams.get('username');
-            const businessID = urlParams.get('businessID');
-
             const stars = document.querySelector('input[name="rating"]:checked').value;
             const review = document.getElementById('user_review').value;
-
 
             console.log("Review form values:", { username, businessID, stars, review });
 
@@ -38,9 +45,7 @@ export function review_form_handler() {
             }
 
             const confirmation = confirm("Submit Review?");
-            if (!confirmation) {
-                return;
-            }
+            if (!confirmation) return;
 
             try {
                 const response = await fetch('/save-review', {
@@ -70,66 +75,72 @@ export function review_form_handler() {
 
 
 // Create the table of reviews
-export function make_reviews_table() {
+export async function make_reviews_table() {
     // Load reviews @ reviews.html
-    const loadReviewsButton = document.getElementById('load_reviews');
+    console.log("Running make reviews table function");
     const reviewsTable = document.getElementById('reviews_table');
-    if(loadReviewsButton && reviewsTable) {
+
+    if(reviewsTable) {
         console.log("Adding listener for reviews_table.")
 
-        loadReviewsButton.addEventListener('click', async function () {
-            const urLParams = new URLSearchParams(window.location.search);
-            const businessID = urLParams.get('businessID');
+        // Get reviews data from server
+        let response = await fetch(`/all-reviews?businessID=${businessID}`);
+        const data = await response.json();
 
-            let response = await fetch(`/all-reviews?businessID=${businessID}`);
-            const data = await response.json();
+        // Construct header row
+        reviewsTable.innerHTML = "<tr>\n" +
+            "                     <th>Username</th>\n" +
+            "                     <th>Stars</th>\n" +
+            "                     <th>Review</th>\n" +
+            "                     </tr>"
 
-            reviewsTable.innerHTML = "<tr>\n" +
-                "                     <th>Username</th>\n" +
-                "                     <th>Stars</th>\n" +
-                "                     <th>Review</th>\n" +
-                "                     </tr>"
+        // Populate table with reviews
+        for(const username in data) {
+            // Get reviews for this user
+            const userReviews = data[username];
 
-            for(const username in data) {
-                const userReviews = data[username];
+            // Add each review row based on review data for this user
+            userReviews.forEach(r => {
+                // r[0] = stars, r[1] = review text
 
-                userReviews.forEach(r => {
-                    const newRow = document.createElement("tr");
+                // New row
+                const newRow = document.createElement("tr");
 
-                    const colUser = document.createElement("td");
-                    colUser.textContent = username;
-                    newRow.appendChild(colUser);
+                // Column 1, username
+                const colUser = document.createElement("td");
+                colUser.textContent = username;
+                newRow.appendChild(colUser);
 
-                    const colStars = document.createElement("td");
-                    const stars = r[0];
-                    switch (stars) {
-                        case "1":
-                            colStars.textContent = "★ ☆ ☆ ☆ ☆";
-                            break;
-                        case "2":
-                            colStars.textContent = "★ ★ ☆ ☆ ☆";
-                            break;
-                        case "3":
-                            colStars.textContent = "★ ★ ★ ☆ ☆";
-                            break;
-                        case "4":
-                            colStars.textContent = "★ ★ ★ ★ ☆";
-                            break;
-                        case "5":
-                            colStars.textContent = "★ ★ ★ ★ ★";
-                            break;
-                    }
-                    newRow.appendChild(colStars);
+                // Column 2, stars
+                const colStars = document.createElement("td");
+                const stars = r[0];
+                switch (stars) {
+                    case "1":
+                        colStars.textContent = "★ ☆ ☆ ☆ ☆";
+                        break;
+                    case "2":
+                        colStars.textContent = "★ ★ ☆ ☆ ☆";
+                        break;
+                    case "3":
+                        colStars.textContent = "★ ★ ★ ☆ ☆";
+                        break;
+                    case "4":
+                        colStars.textContent = "★ ★ ★ ★ ☆";
+                        break;
+                    case "5":
+                        colStars.textContent = "★ ★ ★ ★ ★";
+                        break;
+                }
+                newRow.appendChild(colStars);
 
-                    const colReview = document.createElement("td");
-                    colReview.textContent = r[1];
-                    newRow.appendChild(colReview);
+                // Column 3, review text
+                const colReview = document.createElement("td");
+                colReview.textContent = r[1];
+                newRow.appendChild(colReview);
 
-                    reviewsTable.appendChild(newRow);
-                });
-
-            }
-        });
+                reviewsTable.appendChild(newRow);
+            });
+        }
     }
 }
 
@@ -140,9 +151,6 @@ export function back_button_handler() {
     const backButton = document.getElementById('redirect_back');
     if(backButton) {
         backButton.addEventListener('click', function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            const username = encodeURIComponent(urlParams.get('username'));
-
             window.location.href = `/businesses?username=${username}`;
         });
     }

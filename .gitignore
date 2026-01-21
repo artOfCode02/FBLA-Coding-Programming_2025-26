@@ -364,3 +364,4 @@ FodyWeavers.xsd
 
 # Visual Studio Code workspace settings
 .vscode/
+.idea/
