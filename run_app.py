@@ -35,11 +35,11 @@ def open_dev_tools(view):
     try:     
         print("Opening DevTools...")
 
-        if hasattr(view, 'dev_tools') and view.dev_tools is not None:
-            # DevTools already open; just raise and focus it
-            view.dev_tools.raise_()
-            view.dev_tools.activateWindow()
-            return
+        #if hasattr(view, 'dev_tools') and view.dev_tools is not None:
+        #    # DevTools already open; just raise and focus it
+        #    view.dev_tools.raise_()
+        #    view.dev_tools.activateWindow()
+        #    return
 
         dev_tools = QWebEngineView()
         dev_tools.setWindowTitle("DevTools - FBLA Coding & Programming 2025-26")
