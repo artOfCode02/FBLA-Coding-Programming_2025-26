@@ -1,3 +1,5 @@
+import { getPlaces } from "./location.js";
+
 
 // -------------------------
 // Init Page Form Listener
@@ -53,6 +55,9 @@ export function index_form_handler() {
             const business_category = (document.getElementById('business_category') || { value: '' }).value;
 
             console.log("Username:", username, "Category:", business_category);
+
+            // Cache businesses before redirecting
+            await getPlaces(business_category);
 
             // Navigate to businesses page with URL params
             window.location.href = `/businesses?username=${encodeURIComponent(username)}&category=${encodeURIComponent(business_category)}`;

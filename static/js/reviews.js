@@ -84,7 +84,7 @@ export async function make_reviews_table() {
         console.log("Adding listener for reviews_table.")
 
         // Get reviews data from server
-        let response = await fetch(`/all-reviews?businessID=${businessID}`);
+        const response = await fetch(`/all-reviews?businessID=${businessID}`);
         const data = await response.json();
 
         // Construct header row

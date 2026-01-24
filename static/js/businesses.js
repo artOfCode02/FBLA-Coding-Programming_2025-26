@@ -1,5 +1,3 @@
-import { getPlaces } from "./location.js";
-
 // GLOBAL VARIABLES
 const urlParams = new URLSearchParams(window.location.search);
 const username = urlParams.get("username") || "Anonymous";
@@ -112,7 +110,8 @@ export async function make_businesses_table() {
     
     if(businessesTable) {
         try {
-            const businesses = await getPlaces();
+            const response = await fetch('/load-businesses-cache')
+            const businesses = await response.json();
             console.log("Businesses fetched:", businesses);
 
             // Clear previous rows
