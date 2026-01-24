@@ -75,7 +75,7 @@ export async function getPlaces() {
         }
 
         // Map and filter out incomplete entries
-        return data.features.map(feature => {
+        const businesses = data.features.map(feature => {
             const props = feature.properties || {};
 
             const city = props.city || props.county || '';
@@ -92,8 +92,22 @@ export async function getPlaces() {
                 city: region
             };
             console.log('Found business:', business);
+
             return business;
         }).filter(Boolean);
+
+         // Cache business in businesses.json for faster loading
+        const businesses_cache_response = await fetch('/store-businesses-cache', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(businesses)
+        });
+        // Error checking for '/cache_business' endpoint
+        if (!businesses_cache_response.ok) {
+            const errorBody = await businesses_cache_response.text();
+            console.error(`Failed to cache businesses. Server returned status ${businesses_cache_response.status}. Response body: ${errorBody}`);
+        }
+        
     } catch (err) {
         console.error("Error: ", err)
     }

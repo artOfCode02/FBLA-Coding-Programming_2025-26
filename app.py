@@ -178,6 +178,41 @@ def remove_bookmark():
             "message": "Request must be JSON."
         }), 400
     
+
+# Store businesses into cache for faster loading
+@app.route('/store-businesses-cache', methods=['POST'])
+def cache_businesses():
+    if request.is_json:
+        data = request.get_json()
+
+        # Validate data
+        if not data:
+            return jsonify({"success": False, "message": "No data provided."}), 400
+
+        # Remove old cache if it exists
+        if 'businesses_cache.json' in os.listdir():
+            os.remove('businesses_cache.json')
+
+        # Save new cache
+        with open('businesses_cache.json', 'w') as f:
+            json.dump(data, f, indent=2)
+
+        return jsonify({"success": True, "message": "Businesses cached successfully."}), 200
+
+    else:
+        return jsonify({"success": False, "message": "Request must be JSON."}), 400
+
+
+# Load businesses from cache
+@app.route('/load-businesses-cache')
+def load_businesses_cache():
+    if os.path.exists('businesses_cache.json'):
+        with open('businesses_cache.json', 'r') as f:
+            data = json.load(f)
+
+        return jsonify(data), 200
+    else:
+        return jsonify({"success": False, "message": "No cache found."}), 404
 ############################################################################
 
 ##########################--- REVIEWS ---##################################

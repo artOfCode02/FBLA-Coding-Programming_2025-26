@@ -2,11 +2,10 @@ from PyQt6.QtWidgets import QApplication
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtCore import QUrl, QTimer
 
-
+import os
 import sys
 import threading
 import queue
-
 
 from flask import jsonify
 from app import app
@@ -49,6 +48,7 @@ def open_dev_tools(view):
         dev_tools.height = 600
         view.dev_tools = dev_tools  # Store reference to avoid garbage collection
         print("DevTools opened.")
+        
     except Exception as e:
         print(f"Error opening DevTools: {e}")
 
@@ -63,10 +63,21 @@ def run_open_dev_tools():
         return jsonify({"success": False, "message": str(e)}), 500
 ############################################################################
 
+# Delete businesses cache file
+def delete_businesses_cache():
+    try:
+        if 'businesses_cache.json' in os.listdir():
+            os.remove('businesses_cache.json')
+            print("Deleted businesses_cache.json")
+    except Exception as e:
+        print(f"Error deleting businesses cache: {e}")
+
+# Cleanup function to be called on exit
+def perform_cleanup():
+    delete_businesses_cache()
+
 # Main thread function
 def main():
-
-
     # Run Flask in a background thread
     t = threading.Thread(target=start_flask)
     t.daemon = True
@@ -83,6 +94,9 @@ def main():
     timer = QTimer()
     timer.timeout.connect(lambda: process_commands(view))
     timer.start(50)  # Check every 50 ms
+
+    # Ensure cleanup on exit
+    Qapp.aboutToQuit.connect(perform_cleanup)
 
     sys.exit(Qapp.exec())
 
