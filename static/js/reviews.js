@@ -63,6 +63,7 @@ export function review_form_handler() {
                 const result = await response.json();
                 console.log("Server response:", result);
 
+                location.reload();
             } catch (err) {
                 console.error("Error sending review to server:", err);
                 alert("Failed to save review. Check console for details.");
@@ -95,9 +96,9 @@ export async function make_reviews_table() {
             "                     </tr>"
 
         // Populate table with reviews
-        for(const username in data) {
+        for(const row_username in data) {
             // Get reviews for this user
-            const userReviews = data[username];
+            const userReviews = data[row_username];
 
             // Add each review row based on review data for this user
             userReviews.forEach(r => {
@@ -108,7 +109,7 @@ export async function make_reviews_table() {
 
                 // Column 1, username
                 const colUser = document.createElement("td");
-                colUser.textContent = username;
+                colUser.textContent = row_username;
                 newRow.appendChild(colUser);
 
                 // Column 2, stars
@@ -137,6 +138,43 @@ export async function make_reviews_table() {
                 const colReview = document.createElement("td");
                 colReview.textContent = r[1];
                 newRow.appendChild(colReview);
+
+                // Column 3, delete review if it's yours
+                const colDelete = document.createElement("td");
+                if(row_username === username) {
+                    const deleteButton = document.createElement("button");
+                    deleteButton.textContent = "Delete Review";
+                    deleteButton.addEventListener('click', async () => {
+                        const confirmation = confirm("Are you sure you want to delete your review(s)?");
+                        if(!confirmation) return;
+
+                        try {
+                            const response = await fetch('/delete-review', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ businessID, username })
+                            });
+
+                            if (!response.ok) {
+                                const errorBody = await response.text();
+                                // Throw an error that includes the HTTP status code
+                                throw new Error(`Server returned status ${response.status}. Response body: ${errorBody}`);
+                            }
+
+                            const result = await response.json();
+                            console.log("Server response:", result);
+
+                            location.reload();
+                        } catch (err) {
+                            console.error("Error deleting review:", err);
+                            alert("Failed to delete review. Check console for details.");
+                        }
+
+                    });
+
+                    colDelete.appendChild(deleteButton);
+                    newRow.appendChild(colDelete);
+                }
 
                 reviewsTable.appendChild(newRow);
             });

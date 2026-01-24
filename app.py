@@ -249,6 +249,47 @@ def save_review():
         # Body not JSON
         return jsonify({"success": False, "message": "Request body must be JSON"}), 400
     
+@app.route('/delete-reviews', methods=['POST'])
+def delete_reviews():
+    if request.is_json:
+        data = request.get_json()
+
+        # Extract variables from arguments
+        businessID = data.get('businessID')
+        username = data.get('username')
+
+        if not all([businessID, username]):
+            return jsonify({
+                "success": False,
+                "message": "Missing required fields (businessID or username)."
+            }), 400
+
+        reviewData = load_reviews()
+
+        # If businessID or username does not exist
+        if businessID not in reviewData or username not in reviewData[businessID]:
+            return jsonify({
+                "success": False,
+                "message": "Review does not exist."
+            }), 400
+
+        # Remove reviews
+        del reviewData[businessID][username]
+
+        # Save reviews
+        save_reviews(reviewData)
+
+        return jsonify({
+            "success": True,
+            "message": "Reviews removed successfully."
+        }), 200
+
+    else:
+        return jsonify({
+            "success": False,
+            "message": "Request must be JSON."
+        }), 400
+
 # Fetch reviews based off businessID
 @app.route('/all-reviews')
 def all_reviews():
@@ -259,3 +300,58 @@ def all_reviews():
         return jsonify({})
 
     return jsonify(reviews[businessID])
+
+# The Zen of Python, by Tim Peters
+# Beautiful is better than ugly.
+# Explicit is better than implicit.
+# Simple is better than complex.
+# Complex is better than complicated.
+# Flat is better than nested.
+# Sparse is better than dense.
+# Readability counts.
+# Special cases aren't special enough to break the rules.
+# Although practicality beats purity.
+# Errors should never pass silently.
+# Unless explicitly silenced.
+# In the face of ambiguity, refuse the temptation to guess.
+# There should be one-- and preferably only one --obvious way to do it.
+# Although that way may not be obvious at first unless you're Dutch.
+# Now is better than never.
+# Although never is often better than *right* now.
+# If the implementation is hard to explain, it's a bad idea.
+# If the implementation is easy to explain, it may be a good idea.
+# Namespaces are one honking great idea -- let's do more of those!
+
+# End of file
+# Finally
+# Goodbye.
+# We've reached the end.
+# This is the end of app.py
+# Go on now, you may close it.
+# You have my permission.
+# Farewell.
+# Forever.
+# The file has ended here sir...
+# Why are you still reading this?
+# It's over.
+# You can close it now.
+# Seriously.
+# Stop it.
+# Close the file.
+# Please.
+# Thank you.
+# You're still here?
+# Wow.
+# Impressive dedication.
+# But really, it's over.
+# Bye.
+# THIS IS THE END.
+# GO AWAY.
+# THE END.
+# STOP READING.
+# END OF FILE.
+# THE END.
+# WHY ARE YOU STILL READING THIS?
+# GOODBYE.
+# I don't have any more lines to give you.
+# The end.
