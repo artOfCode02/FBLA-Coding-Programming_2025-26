@@ -3,7 +3,7 @@
 // ---------------------------
 import { index_form_handler } from "./js/index.js";
 
-import { make_businesses_table, change_username_handler } from "./js/businesses.js";
+import { make_businesses_table, change_username_handler, change_geolocation_handler } from "./js/businesses.js";
 
 import { review_title, review_form_handler, make_reviews_table, back_button_handler } from "./js/reviews.js";
 
@@ -23,6 +23,8 @@ document.addEventListener('DOMContentLoaded', function () {
             make_businesses_table();
             // Call change username handler
             change_username_handler();
+            // Call change geolocation handler
+            change_geolocation_handler();
             break;
         case '/reviews':
             console.log("On reviews page");

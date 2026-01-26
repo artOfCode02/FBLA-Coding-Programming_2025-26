@@ -42,7 +42,7 @@ function getBrowserLocation() {
 export async function getPlaces() {
     console.log("Fetching places from Geoapify...");
 
-    // Try IP geolocation first, fall back to browser geolocation, then to a sensible default
+    //Try IP geolocation first, fall back to browser geolocation, then to a sensible default
     let loc = await getLocationFromIP();
     if (!loc) {
         loc = await getBrowserLocation();
@@ -64,7 +64,7 @@ export async function getPlaces() {
     const url = `https://api.geoapify.com/v2/places?${params.toString()}`;
 
     
-
+    
     try {
         const response = await fetch(url);
         const data = await response.json();

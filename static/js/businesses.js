@@ -180,6 +180,9 @@ export async function make_businesses_table() {
     }  
 }
 
+// -------------------------
+// Change Username Handler
+// -------------------------
 export function change_username_handler() {
     const changeUsernameForm = document.getElementById('change_username_form');
 
@@ -192,6 +195,7 @@ export function change_username_handler() {
 
             const newUsername = document.getElementById('change_username_input').value.trim();
             if(newUsername) {
+                // Update URL with new username param
                 console.log("Changing username to:", newUsername);
                 const urlParams = new URLSearchParams(window.location.search);
                 urlParams.set('username', newUsername);
@@ -204,5 +208,50 @@ export function change_username_handler() {
         });
     } else {
         console.log("Change username form NOT found on this page");
+    }
+}
+
+// -------------------------
+// Change Geolocation
+// -------------------------
+export function change_geolocation_handler() {
+    const changeLocationButton = document.getElementById('change_current_location');
+    const changeLocationDialog = document.getElementById('geolocation_dialog');
+    const changeLocationBgOverlay = document.getElementById('geolocation_dialog_container');
+
+    if(changeLocationButton && changeLocationDialog) {
+        changeLocationButton.addEventListener('click', () => {
+            changeLocationDialog.showModal();
+
+        });
+
+        const geolocationForm = document.getElementById('geolocation_form');
+        const geolocationCancel = document.getElementById('geolocation_cancel');
+
+        if(geolocationForm && geolocationCancel) {
+            geolocationForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                const newLocation = document.getElementById('geolocation_input').value.trim();
+                if(newLocation) {
+                    console.log("Changing location to:", newLocation);
+                    const urlParams = new URLSearchParams(window.location.search);
+                    urlParams.set('location', newLocation);
+                    window.location.search = urlParams.toString();
+
+                    alert(`Location changed to: ${newLocation}`);
+                } else {
+                    alert("Location cannot be empty.");
+                }
+            });
+
+            geolocationCancel.addEventListener('click', () => {
+                changeLocationDialog.close();
+            });
+        } else {
+            console.log("Geolocation form or cancel button NOT found on this page");
+        }
+    } else {
+        console.log("Change location button or dialog NOT found on this page");
     }
 }

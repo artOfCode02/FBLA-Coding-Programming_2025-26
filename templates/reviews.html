@@ -7,32 +7,34 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-<button id="redirect_back">&lt;&lt; Back to Businesses</button>
-<form id="writeReview">
-    <p>Writing review as <span id="write_username"></span> for <span id="write_business_name"></span>.</p>
-    <p>Rate Us:
-        <label>
-            <input type="radio" name="rating" value="1">
-            <input type="radio" name="rating" value="2">
-            <input type="radio" name="rating" value="3">
-            <input type="radio" name="rating" value="4">
-            <input type="radio" name="rating" value="5">
-        </label>
-    </p>
+    <button id="redirect_back">&lt;&lt; Back to Businesses</button>
 
-    <label for="user_review">Write a review for us!</label>
-    <br>
-    <textarea name="user_review" id="user_review"></textarea>
-    <br>
-    <button type="submit" value="Submit">Submit Review</button>
-</form>
-<hr>
-<table id="reviews_table">
-    <tr>
-        <th>Username</th>
-        <th>Stars</th>
-        <th>Review</th>
-    </tr>
-</table>
+    <form id="writeReview">
+        <p>Writing review as <span id="write_username"></span> for <span id="write_business_name"></span>.</p>
+        <p>Rate Us:
+            <label>
+                <input type="radio" name="rating" value="1">
+                <input type="radio" name="rating" value="2">
+                <input type="radio" name="rating" value="3">
+                <input type="radio" name="rating" value="4">
+                <input type="radio" name="rating" value="5">
+            </label>
+        </p>
+        <label for="user_review">Write a review for us!</label>
+        <br>
+        <textarea name="user_review" id="user_review"></textarea>
+        <br>
+        <button type="submit" value="Submit">Submit Review</button>
+    </form>
+
+    <hr>
+
+    <table id="reviews_table">
+        <tr>
+            <th>Username</th>
+            <th>Stars</th>
+            <th>Review</th>
+        </tr>
+    </table>
 </body>
 </html>

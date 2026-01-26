@@ -72,3 +72,15 @@ textarea {
     box-sizing: border-box;
     margin-right: 20px;
 }
+
+#vertical-rule {
+	border-left: 2px solid black;
+	height: 100%;
+	display: inline-block;
+	vertical-align: middle;
+	padding-top: 35px;
+}
+
+#inline_containter {
+	display: inline-block;
+}

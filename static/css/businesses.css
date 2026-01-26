@@ -1,4 +1,22 @@
-#change_username_label, #change_username_input, #change_username_submit {
+#change_username_form, #change_username_label, #change_username_input, #change_username_submit {
     display: inline;
     width: auto;
+}
+
+#geolocation_dialog {
+    border: 3px solid sienna;
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin: 20px auto;
+    width: 360px;
+    background-color: tan;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    color: #2b1f16;
+    position: absolute;
+    translate: 0 150%;
+}
+
+#change_geolocation_state_label {
+    display: inline;
 }

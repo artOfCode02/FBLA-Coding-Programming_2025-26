@@ -283,9 +283,9 @@ def save_review():
     else:
         # Body not JSON
         return jsonify({"success": False, "message": "Request body must be JSON"}), 400
-    
-@app.route('/delete-reviews', methods=['POST'])
-def delete_reviews():
+
+@app.route('/delete-review', methods=['POST'])
+def delete_review():
     if request.is_json:
         data = request.get_json()
 
@@ -316,7 +316,7 @@ def delete_reviews():
 
         return jsonify({
             "success": True,
-            "message": "Reviews removed successfully."
+            "message": "Review removed successfully."
         }), 200
 
     else:

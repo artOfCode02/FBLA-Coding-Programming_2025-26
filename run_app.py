@@ -72,9 +72,19 @@ def delete_businesses_cache():
     except Exception as e:
         print(f"Error deleting businesses cache: {e}")
 
+# Close dev tools window on exit
+def close_dev_tools(view):
+    try:
+        if hasattr(view, 'dev_tools') and view.dev_tools is not None:
+            view.dev_tools.close()
+            print("Closed DevTools window.")
+    except Exception as e:
+        print(f"Error closing DevTools: {e}")
+
 # Cleanup function to be called on exit
-def perform_cleanup():
+def perform_cleanup(view):
     delete_businesses_cache()
+    close_dev_tools(view)
 
 # Main thread function
 def main():
@@ -96,7 +106,7 @@ def main():
     timer.start(50)  # Check every 50 ms
 
     # Ensure cleanup on exit
-    Qapp.aboutToQuit.connect(perform_cleanup)
+    Qapp.aboutToQuit.connect(lambda: perform_cleanup(view))
 
     sys.exit(Qapp.exec())
 
