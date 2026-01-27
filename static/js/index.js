@@ -52,15 +52,14 @@ export function index_form_handler() {
             }
 
             const username = document.getElementById('username').value;
-            const business_category = (document.getElementById('business_category') || { value: '' }).value;
 
-            console.log("Username:", username, "Category:", business_category);
+            console.log("Username entered:", username);
 
             // Cache businesses before redirecting
-            await getPlaces(business_category);
+            await getPlaces();
 
             // Navigate to businesses page with URL params
-            window.location.href = `/businesses?username=${encodeURIComponent(username)}&category=${encodeURIComponent(business_category)}`;
+            window.location.href = `/businesses?username=${encodeURIComponent(username)}`;
         });
     } else {
         console.log("Init form NOT found on this page");

@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtCore import QUrl, QTimer
+from PyQt6.QtWebEngineCore import QWebEnginePermission
 
 import os
 import sys
@@ -63,6 +64,14 @@ def run_open_dev_tools():
         return jsonify({"success": False, "message": str(e)}), 500
 ############################################################################
 
+# Set geolcation permissions to true for navigator.geolcation.getCurrentPosition()
+def handle_permissions(view, security_origin, permission_type):
+    if permission_type == QWebEnginePermission.PermissionType.Geolocation:
+        permission = view.page().permission(security_origin, permission_type)
+        permission.grant()
+        print(f"Granted geolocation permission for {security_origin.toString()}")
+
+
 # Delete businesses cache file
 def delete_businesses_cache():
     try:
@@ -98,6 +107,9 @@ def main():
     view = QWebEngineView()
     view.load(QUrl("http://127.0.0.1:5000"))
     view.setWindowTitle("FBLA Coding & Programming 2025-26")
+    view.page().featurePermissionRequested.connect(
+        lambda security_origin, permission_type: handle_permissions(view, security_origin, permission_type)
+    )
     view.showMaximized()
     
     # Qt timer runs on main thread to process commands from Flask

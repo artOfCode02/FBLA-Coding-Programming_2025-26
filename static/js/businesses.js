@@ -1,3 +1,5 @@
+import { getPlaces } from './location.js';
+
 // GLOBAL VARIABLES
 const urlParams = new URLSearchParams(window.location.search);
 const username = urlParams.get("username") || "Anonymous";
@@ -217,7 +219,6 @@ export function change_username_handler() {
 export function change_geolocation_handler() {
     const changeLocationButton = document.getElementById('change_current_location');
     const changeLocationDialog = document.getElementById('geolocation_dialog');
-    const changeLocationBgOverlay = document.getElementById('geolocation_dialog_container');
 
     if(changeLocationButton && changeLocationDialog) {
         changeLocationButton.addEventListener('click', () => {
@@ -232,14 +233,18 @@ export function change_geolocation_handler() {
             geolocationForm.addEventListener('submit', (event) => {
                 event.preventDefault();
 
-                const newLocation = document.getElementById('geolocation_input').value.trim();
-                if(newLocation) {
-                    console.log("Changing location to:", newLocation);
-                    const urlParams = new URLSearchParams(window.location.search);
-                    urlParams.set('location', newLocation);
-                    window.location.search = urlParams.toString();
+                let newLocation = document.getElementById('change_geolocation_street_address').value.trim();
+                newLocation += ", " + document.getElementById('change_geolocation_city').value.trim();
+                newLocation += ", " + document.getElementById('change_geolocation_state').value;
 
-                    alert(`Location changed to: ${newLocation}`);
+                if(newLocation) {
+                    // Call getPlaces with new location
+                    console.log("Changing location to:", newLocation);
+                    getPlaces(newLocation).then(() => {
+                        changeLocationDialog.close();
+                        alert(`Location changed to: ${newLocation}`);
+                        location.reload();
+                    });
                 } else {
                     alert("Location cannot be empty.");
                 }

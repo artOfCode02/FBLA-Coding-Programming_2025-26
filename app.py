@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template # Python web framework
 import pip._vendor.requests as requests # requests
-import os, json
-
+import os, json, certifi, ssl
+from geopy.geocoders import Nominatim, options # Geopy for geocoding
 
 # Top level domain for app (Flask)
 app = Flask(__name__)
@@ -202,7 +202,6 @@ def cache_businesses():
     else:
         return jsonify({"success": False, "message": "Request must be JSON."}), 400
 
-
 # Load businesses from cache
 @app.route('/load-businesses-cache')
 def load_businesses_cache():
@@ -213,6 +212,18 @@ def load_businesses_cache():
         return jsonify(data), 200
     else:
         return jsonify({"success": False, "message": "No cache found."}), 404
+
+# Clear businesses cache
+@app.route('/clear-businesses-cache')
+def clear_businesses_cache():
+    try:
+        if 'businesses_cache.json' in os.listdir():
+            os.remove('businesses_cache.json')
+            return jsonify({"success": True, "message": "Businesses cache cleared."}), 200
+        else:
+            return jsonify({"success": True, "message": "No cache found."}), 200
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
 ############################################################################
 
 ##########################--- REVIEWS ---##################################
@@ -335,6 +346,37 @@ def all_reviews():
         return jsonify({})
 
     return jsonify(reviews[businessID])
+
+############################################################################
+
+###########################--- LOCATION ---#################################
+@app.route('/get-location-from-address')
+def get_location_from_address():
+    address = request.args.get('address')
+    if not address:
+        return jsonify({"success": False, "message": "No address."}), 404
+    
+    try:
+        # Create a custom SSL context with certifi certificates
+        ctx = ssl.create_default_context(cafile=certifi.where())
+        options.default_ssl_context = ctx
+
+        geolocator = Nominatim(user_agent="fbla_coding_programming_app", timeout=3)
+        location = geolocator.geocode(address)
+        
+        if location:
+            return jsonify({
+                "success": True,
+                "latitude": location.latitude,
+                "longitude": location.longitude
+            }), 200
+        else:
+            return jsonify({"success": False, "message": "Location not found."}), 404
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+############################################################################
+
+    
 
 # The Zen of Python, by Tim Peters
 # Beautiful is better than ugly.

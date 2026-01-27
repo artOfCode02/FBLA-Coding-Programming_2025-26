@@ -24,28 +24,28 @@ async function getLocationFromIP() {
     }
 }
 
-function getBrowserLocation() {
-    return new Promise((resolve) => {
-        if (!navigator.geolocation) return resolve(null);
-        navigator.geolocation.getCurrentPosition(
-            (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-            (err) => {
-                console.warn('Browser geolocation failed or denied:', err);
-                resolve(null);
-            },
-            { timeout: 8000 }
-        );
-    });
-}
 
 // Get places from Geoapify
-export async function getPlaces() {
+export async function getPlaces(address="") {
     console.log("Fetching places from Geoapify...");
 
-    //Try IP geolocation first, fall back to browser geolocation, then to a sensible default
-    let loc = await getLocationFromIP();
+    //Try browser geolocation first, then fall back on IP geolocation, then to a sensible default
+    let loc = null;
+
+    if(address) {
+        console.log("Using provided address:", address);
+
+        let response = await fetch(`/get-location-from-address?address=${encodeURIComponent(address)}`);
+
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.latitude !== null && data.longitude !== null) {
+                loc = { lat: data.latitude, lon: data.longitude };
+            }
+        }
+    }
     if (!loc) {
-        loc = await getBrowserLocation();
+        loc = await getLocationFromIP();
     }
     if (!loc) {
         // Default to continental US center if no location available
@@ -55,6 +55,7 @@ export async function getPlaces() {
 
     const { lat, lon } = loc;
     console.log('Using coordinates:', lat, lon);
+    debugger;
 
     const business_category = "catering";
 
@@ -63,7 +64,6 @@ export async function getPlaces() {
     if (business_category) params.set('categories', business_category);
     const url = `https://api.geoapify.com/v2/places?${params.toString()}`;
 
-    
     
     try {
         const response = await fetch(url);
@@ -95,6 +95,13 @@ export async function getPlaces() {
 
             return business;
         }).filter(Boolean);
+
+        // Clear businesses cache before storing new data
+        const clear_cache_response = await fetch('/clear-businesses-cache');
+        if (!clear_cache_response.ok) {
+            const errorBody = await clear_cache_response.text();
+            console.error(`Failed to clear businesses cache. Server returned status ${clear_cache_response.status}. Response body: ${errorBody}`);
+        }
 
          // Cache business in businesses.json for faster loading
         const businesses_cache_response = await fetch('/store-businesses-cache', {
