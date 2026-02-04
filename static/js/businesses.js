@@ -117,30 +117,36 @@ export async function make_businesses_table() {
             console.log("Businesses fetched:", businesses);
 
             // Clear previous rows
-            const tbody = businessesTable.querySelector("tbody");
-            if(tbody) tbody.innerHTML = "";
+            const listBody = businessesTable.querySelector("div");
+            listBody.classList.add('businesses_table');
+            if(listBody) listBody.innerHTML = "";
 
             businesses.forEach(biz => {
-                // Create a new row
-                const newRow = document.createElement('tr');
+                // Create a table entry div and add to class
+                const newEntry = document.createElement('div');
+                newEntry.classList.add('businesses_table_entry');
 
                 // First column, business name
-                const colName = document.createElement('td');
-                colName.textContent = biz.name;
-                newRow.appendChild(colName);
+                const entryName = document.createElement('div');
+                entryName.classList.add('businesses_table_name');
+                entryName.textContent = biz.name;
+                newEntry.appendChild(entryName);
 
                 // Second column, street address
-                const colStreet = document.createElement('td');
-                colStreet.textContent = biz.street;
-                newRow.appendChild(colStreet);
+                const entryStreet = document.createElement('div');
+                entryStreet.classList.add('buinesses_table_street');
+                entryStreet.textContent = biz.street;
+                newEntry.appendChild(entryStreet);
 
                 // Third column, city
-                const colCity = document.createElement('td');
-                colCity.textContent = biz.city;
-                newRow.appendChild(colCity);
+                const entryCity = document.createElement('div');
+                entryCity.classList.add('businesses_table_city');
+                entryCity.textContent = biz.city;
+                newEntry.appendChild(entryCity);
 
                 // Fourth column, bookmark business
-                const colBookmarkButton = document.createElement('td');
+                const entryBookmarkButton = document.createElement('div');
+                entryBookmarkButton.classList.add('businesses_table_bookmark_button')
                 const bookmarkButton = document.createElement('button');
                 bookmark_check(bookmarkButton, biz.id);
 
@@ -149,8 +155,8 @@ export async function make_businesses_table() {
                     manage_bookmark_button(bookmarkButton, biz.id, biz.name);
                 });
 
-                colBookmarkButton.appendChild(bookmarkButton);
-                newRow.appendChild(colBookmarkButton);
+                entryBookmarkButton.appendChild(bookmarkButton);
+                newEntry.appendChild(entryBookmarkButton);
 
                 // Fifth column, open reviews button
                 const colReviewButton = document.createElement('td');
@@ -167,11 +173,11 @@ export async function make_businesses_table() {
                 });
 
                 colReviewButton.appendChild(reviewButton);
-                newRow.appendChild(colReviewButton);
+                newEntry.appendChild(colReviewButton);
 
 
                 // Append the new row to the table body
-                tbody.appendChild(newRow);
+                listBody.appendChild(newEntry);
             });
         } catch (err) {
             console.error("Error fetching businesses:", err);
