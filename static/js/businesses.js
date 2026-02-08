@@ -149,6 +149,9 @@ export async function make_businesses_table() {
             // Clear previous rows
             const tbody = businessesTable.querySelector('tbody');
             if (tbody) tbody.innerHTML = '';
+            const listBody = businessesTable.querySelector("div");
+            listBody.classList.add('businesses_table');
+            if(listBody) listBody.innerHTML = "";
 
             // Render each business as a card-like row
             businesses.forEach(biz => {
@@ -170,6 +173,31 @@ export async function make_businesses_table() {
                 const controlsEl = document.createElement('div');
                 controlsEl.classList.add('biz-controls');
 
+                // Create a table entry div and add to class
+                const newEntry = document.createElement('div');
+                newEntry.classList.add('businesses_table_entry');
+
+                // First column, business name
+                const entryName = document.createElement('div');
+                entryName.classList.add('businesses_table_name');
+                entryName.textContent = biz.name;
+                newEntry.appendChild(entryName);
+
+                // Second column, street address
+                const entryStreet = document.createElement('div');
+                entryStreet.classList.add('buinesses_table_street');
+                entryStreet.textContent = biz.street;
+                newEntry.appendChild(entryStreet);
+
+                // Third column, city
+                const entryCity = document.createElement('div');
+                entryCity.classList.add('businesses_table_city');
+                entryCity.textContent = biz.city;
+                newEntry.appendChild(entryCity);
+
+                // Fourth column, bookmark business
+                const entryBookmarkButton = document.createElement('div');
+                entryBookmarkButton.classList.add('businesses_table_bookmark_button')
                 const bookmarkButton = document.createElement('button');
                 bookmark_check(bookmarkButton, biz.id);
                 bookmarkButton.addEventListener('click', () => {
@@ -177,6 +205,11 @@ export async function make_businesses_table() {
                     manage_bookmark_button(bookmarkButton, biz.id, biz.name);
                 });
 
+                entryBookmarkButton.appendChild(bookmarkButton);
+                newEntry.appendChild(entryBookmarkButton);
+
+                // Fifth column, open reviews button
+                const colReviewButton = document.createElement('td');
                 const reviewButton = document.createElement('button');
                 reviewButton.textContent = 'Open reviews...';
                 reviewButton.addEventListener('click', () => {
@@ -188,6 +221,8 @@ export async function make_businesses_table() {
 
                 controlsEl.appendChild(bookmarkButton);
                 controlsEl.appendChild(reviewButton);
+                colReviewButton.appendChild(reviewButton);
+                newEntry.appendChild(colReviewButton);
 
                 cell.appendChild(nameEl);
                 cell.appendChild(addrEl);
@@ -195,6 +230,8 @@ export async function make_businesses_table() {
 
                 newRow.appendChild(cell);
                 tbody.appendChild(newRow);
+                // Append the new row to the table body
+                listBody.appendChild(newEntry);
             });
         } catch (err) {
             console.error('Error fetching businesses:', err);
