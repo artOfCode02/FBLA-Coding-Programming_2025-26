@@ -1,7 +1,7 @@
 // CONSTANTS
 // URL parameters
 const urlParams = new URLSearchParams(window.location.search);
-const username = urlParams.get('username');
+const username = urlParams.get('username') || "Anonymous";
 const businessID = urlParams.get('businessID');
 const businessName = urlParams.get('businessName');
 
@@ -41,6 +41,12 @@ export function review_form_handler() {
             if (!stars || !review) {
                 alert("Invalid input, try again.");
                 console.warn("Stars or review missing");
+                return;
+            }
+
+            if (username === "Anonymous") {
+                alert("You must set a username to submit a review.");
+                console.warn("Attempt to submit review with anonymous username");
                 return;
             }
 
@@ -88,65 +94,57 @@ export async function make_reviews_table() {
         const response = await fetch(`/all-reviews?businessID=${businessID}`);
         const data = await response.json();
 
-        // Construct header row
-        reviewsTable.innerHTML = "<tr>\n" +
-            "                     <th>Username</th>\n" +
-            "                     <th>Stars</th>\n" +
-            "                     <th>Review</th>\n" +
-            "                     </tr>"
+        // Clear existing content and render review cards
+        reviewsTable.innerHTML = '';
 
-        // Populate table with reviews
-        for(const row_username in data) {
-            // Get reviews for this user
+        for (const row_username in data) {
             const userReviews = data[row_username];
 
-            // Add each review row based on review data for this user
             userReviews.forEach(r => {
-                // r[0] = stars, r[1] = review text
-
-                // New row
-                const newRow = document.createElement("tr");
-
-                // Column 1, username
-                const colUser = document.createElement("td");
-                colUser.textContent = row_username;
-                newRow.appendChild(colUser);
-
-                // Column 2, stars
-                const colStars = document.createElement("td");
                 const stars = r[0];
+                const text = r[1];
+
+                // Create row and single cell containing a review card
+                const newRow = document.createElement('tr');
+                newRow.classList.add('review-card');
+
+                const cell = document.createElement('td');
+                cell.colSpan = 3;
+                cell.classList.add('review-card-cell');
+
+                // Author (bold) at top
+                const authorEl = document.createElement('div');
+                authorEl.classList.add('review-author');
+                authorEl.textContent = row_username;
+
+                // Stars
+                const starsEl = document.createElement('div');
+                starsEl.classList.add('review-stars');
                 switch (stars) {
-                    case "1":
-                        colStars.textContent = "★ ☆ ☆ ☆ ☆";
-                        break;
-                    case "2":
-                        colStars.textContent = "★ ★ ☆ ☆ ☆";
-                        break;
-                    case "3":
-                        colStars.textContent = "★ ★ ★ ☆ ☆";
-                        break;
-                    case "4":
-                        colStars.textContent = "★ ★ ★ ★ ☆";
-                        break;
-                    case "5":
-                        colStars.textContent = "★ ★ ★ ★ ★";
-                        break;
+                    case '1': starsEl.textContent = '★ ☆ ☆ ☆ ☆'; break;
+                    case '2': starsEl.textContent = '★ ★ ☆ ☆ ☆'; break;
+                    case '3': starsEl.textContent = '★ ★ ★ ☆ ☆'; break;
+                    case '4': starsEl.textContent = '★ ★ ★ ★ ☆'; break;
+                    case '5': starsEl.textContent = '★ ★ ★ ★ ★'; break;
+                    default: starsEl.textContent = '';
                 }
-                newRow.appendChild(colStars);
 
-                // Column 3, review text
-                const colReview = document.createElement("td");
-                colReview.textContent = r[1];
-                newRow.appendChild(colReview);
+                // Review text
+                const textEl = document.createElement('div');
+                textEl.classList.add('review-text');
+                textEl.textContent = text;
 
-                // Column 3, delete review if it's yours
-                const colDelete = document.createElement("td");
-                if(row_username === username) {
-                    const deleteButton = document.createElement("button");
-                    deleteButton.textContent = "Delete Review";
+                // Controls container (delete button placed bottom-right)
+                const controlsEl = document.createElement('div');
+                controlsEl.classList.add('review-controls');
+
+                if (row_username === username) {
+                    const deleteButton = document.createElement('button');
+                    deleteButton.classList.add('review-delete');
+                    deleteButton.textContent = 'Delete Review';
                     deleteButton.addEventListener('click', async () => {
-                        const confirmation = confirm("Are you sure you want to delete your review(s)?");
-                        if(!confirmation) return;
+                        const confirmation = confirm('Are you sure you want to delete your review(s)?');
+                        if (!confirmation) return;
 
                         try {
                             const response = await fetch('/delete-review', {
@@ -157,25 +155,26 @@ export async function make_reviews_table() {
 
                             if (!response.ok) {
                                 const errorBody = await response.text();
-                                // Throw an error that includes the HTTP status code
                                 throw new Error(`Server returned status ${response.status}. Response body: ${errorBody}`);
                             }
 
-                            const result = await response.json();
-                            console.log("Server response:", result);
-
+                            await response.json();
                             location.reload();
                         } catch (err) {
-                            console.error("Error deleting review:", err);
-                            alert("Failed to delete review. Check console for details.");
+                            console.error('Error deleting review:', err);
+                            alert('Failed to delete review. Check console for details.');
                         }
-
                     });
 
-                    colDelete.appendChild(deleteButton);
-                    newRow.appendChild(colDelete);
+                    controlsEl.appendChild(deleteButton);
                 }
 
+                cell.appendChild(authorEl);
+                cell.appendChild(starsEl);
+                cell.appendChild(textEl);
+                cell.appendChild(controlsEl);
+
+                newRow.appendChild(cell);
                 reviewsTable.appendChild(newRow);
             });
         }

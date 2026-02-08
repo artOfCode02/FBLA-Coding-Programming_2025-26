@@ -23,6 +23,8 @@ async function bookmark_check(button, businessID) {
     }
 }
 
+
+
 async function manage_bookmark_button(button, businessID, businessName) {
     // Check if business is bookmarked
     const response = await fetch(`/is-bookmarked?username=${encodeURIComponent(username)}&businessID=${encodeURIComponent(businessID)}`);
@@ -111,71 +113,92 @@ export async function make_businesses_table() {
     const businessesTable = document.getElementById('businesses_table');
     
     if(businessesTable) {
+        // If an address param was provided, ensure we fetch places for it first
+        const urlParamsLocal = new URLSearchParams(window.location.search);
+        const addressParam = urlParamsLocal.get('address') || '';
+        if (addressParam) {
+            console.log('Address param found on businesses page:', addressParam);
+            // Ensure the cache is populated for this address
+            await getPlaces(addressParam);
+        }
         try {
-            const response = await fetch('/load-businesses-cache')
-            const businesses = await response.json();
-            console.log("Businesses fetched:", businesses);
+            // Try sessionStorage first, then fall back to server cache
+            let businesses = [];
+            const stored = sessionStorage.getItem('businesses');
+            if (stored) {
+                try {
+                    businesses = JSON.parse(stored);
+                    console.log('Loaded businesses from sessionStorage:', businesses);
+                } catch (e) {
+                    console.warn('Failed to parse businesses from sessionStorage', e);
+                    businesses = [];
+                }
+            }
+
+            if (!businesses || businesses.length === 0) {
+                const response = await fetch('/load-businesses-cache');
+                if (response.ok) {
+                    businesses = await response.json();
+                    console.log('Loaded businesses from server cache:', businesses);
+                } else {
+                    console.warn('No businesses found in server cache');
+                    businesses = [];
+                }
+            }
 
             // Clear previous rows
-            const tbody = businessesTable.querySelector("tbody");
-            if(tbody) tbody.innerHTML = "";
+            const tbody = businessesTable.querySelector('tbody');
+            if (tbody) tbody.innerHTML = '';
 
+            // Render each business as a card-like row
             businesses.forEach(biz => {
-                // Create a new row
                 const newRow = document.createElement('tr');
+                newRow.classList.add('business-card');
 
-                // First column, business name
-                const colName = document.createElement('td');
-                colName.textContent = biz.name;
-                newRow.appendChild(colName);
+                const cell = document.createElement('td');
+                cell.colSpan = 5;
+                cell.classList.add('business-card-cell');
 
-                // Second column, street address
-                const colStreet = document.createElement('td');
-                colStreet.textContent = biz.street;
-                newRow.appendChild(colStreet);
+                const nameEl = document.createElement('div');
+                nameEl.classList.add('biz-name');
+                nameEl.textContent = biz.name;
 
-                // Third column, city
-                const colCity = document.createElement('td');
-                colCity.textContent = biz.city;
-                newRow.appendChild(colCity);
+                const addrEl = document.createElement('div');
+                addrEl.classList.add('biz-addr');
+                addrEl.textContent = `${biz.street} • ${biz.city}`;
 
-                // Fourth column, bookmark business
-                const colBookmarkButton = document.createElement('td');
+                const controlsEl = document.createElement('div');
+                controlsEl.classList.add('biz-controls');
+
                 const bookmarkButton = document.createElement('button');
                 bookmark_check(bookmarkButton, biz.id);
-
-                bookmarkButton.addEventListener('click', () => {  
-                    bookmark_check(bookmarkButton, biz.id);                      
+                bookmarkButton.addEventListener('click', () => {
+                    bookmark_check(bookmarkButton, biz.id);
                     manage_bookmark_button(bookmarkButton, biz.id, biz.name);
                 });
 
-                colBookmarkButton.appendChild(bookmarkButton);
-                newRow.appendChild(colBookmarkButton);
-
-                // Fifth column, open reviews button
-                const colReviewButton = document.createElement('td');
                 const reviewButton = document.createElement('button');
-                reviewButton.textContent = "Open reviews...";
-
+                reviewButton.textContent = 'Open reviews...';
                 reviewButton.addEventListener('click', () => {
                     const username_encoded = encodeURIComponent(username);
                     const businessID = biz.id;
                     const businessName = encodeURIComponent(biz.name);
-
-                    console.log("Navigating to reviews page for business:", biz.name);
                     window.location.href = `/reviews?username=${username_encoded}&businessID=${businessID}&businessName=${businessName}`;
                 });
 
-                colReviewButton.appendChild(reviewButton);
-                newRow.appendChild(colReviewButton);
+                controlsEl.appendChild(bookmarkButton);
+                controlsEl.appendChild(reviewButton);
 
+                cell.appendChild(nameEl);
+                cell.appendChild(addrEl);
+                cell.appendChild(controlsEl);
 
-                // Append the new row to the table body
+                newRow.appendChild(cell);
                 tbody.appendChild(newRow);
             });
         } catch (err) {
-            console.error("Error fetching businesses:", err);
-            alert("Failed to load businesses. Check console for details.");
+            console.error('Error fetching businesses:', err);
+            alert('Failed to load businesses. Check console for details.');
         }
     } else {
         console.log("Businesses table NOT found on this page");
@@ -220,33 +243,38 @@ export function change_geolocation_handler() {
     const changeLocationButton = document.getElementById('change_current_location');
     const changeLocationDialog = document.getElementById('geolocation_dialog');
 
-    if(changeLocationButton && changeLocationDialog) {
+    if (changeLocationButton && changeLocationDialog) {
         changeLocationButton.addEventListener('click', () => {
             changeLocationDialog.showModal();
-
         });
 
         const geolocationForm = document.getElementById('geolocation_form');
         const geolocationCancel = document.getElementById('geolocation_cancel');
 
-        if(geolocationForm && geolocationCancel) {
-            geolocationForm.addEventListener('submit', (event) => {
+        if (geolocationForm && geolocationCancel) {
+            geolocationForm.addEventListener('submit', async (event) => {
                 event.preventDefault();
 
                 let newLocation = document.getElementById('change_geolocation_street_address').value.trim();
                 newLocation += ", " + document.getElementById('change_geolocation_city').value.trim();
                 newLocation += ", " + document.getElementById('change_geolocation_state').value;
 
-                if(newLocation) {
-                    // Call getPlaces with new location
-                    console.log("Changing location to:", newLocation);
-                    getPlaces(newLocation).then(() => {
-                        changeLocationDialog.close();
-                        alert(`Location changed to: ${newLocation}`);
-                        location.reload();
-                    });
+                if (newLocation) {
+                    try {
+                        console.log('Changing location to:', newLocation);
+                        // Populate cache for new address
+                        await getPlaces(newLocation);
+
+                        // Update URL with new address param while preserving username
+                        const params = new URLSearchParams(window.location.search);
+                        params.set('address', newLocation);
+                        window.location.search = params.toString();
+                    } catch (err) {
+                        console.error('Failed to change location:', err);
+                        alert('Failed to change location. See console for details.');
+                    }
                 } else {
-                    alert("Location cannot be empty.");
+                    alert('Location cannot be empty.');
                 }
             });
 
@@ -254,9 +282,9 @@ export function change_geolocation_handler() {
                 changeLocationDialog.close();
             });
         } else {
-            console.log("Geolocation form or cancel button NOT found on this page");
+            console.log('Geolocation form or cancel button NOT found on this page');
         }
     } else {
-        console.log("Change location button or dialog NOT found on this page");
+        console.log('Change location button or dialog NOT found on this page');
     }
 }

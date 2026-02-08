@@ -55,7 +55,6 @@ export async function getPlaces(address="") {
 
     const { lat, lon } = loc;
     console.log('Using coordinates:', lat, lon);
-    debugger;
 
     const business_category = "catering";
 
@@ -96,24 +95,19 @@ export async function getPlaces(address="") {
             return business;
         }).filter(Boolean);
 
-        // Clear businesses cache before storing new data
-        const clear_cache_response = await fetch('/clear-businesses-cache');
-        if (!clear_cache_response.ok) {
-            const errorBody = await clear_cache_response.text();
-            console.error(`Failed to clear businesses cache. Server returned status ${clear_cache_response.status}. Response body: ${errorBody}`);
+        // Cache businesses in sessionStorage for faster, client-side loading
+        try {
+            sessionStorage.setItem('businesses', JSON.stringify(businesses));
+            // Also store the address/coords used to fetch these businesses
+            if (address) {
+                sessionStorage.setItem('businesses_address', address);
+            } else {
+                sessionStorage.removeItem('businesses_address');
+            }
+        } catch (err) {
+            console.warn('Failed to write businesses to sessionStorage:', err);
         }
-
-         // Cache business in businesses.json for faster loading
-        const businesses_cache_response = await fetch('/store-businesses-cache', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(businesses)
-        });
-        // Error checking for '/cache_business' endpoint
-        if (!businesses_cache_response.ok) {
-            const errorBody = await businesses_cache_response.text();
-            console.error(`Failed to cache businesses. Server returned status ${businesses_cache_response.status}. Response body: ${errorBody}`);
-        }
+        return businesses;
         
     } catch (err) {
         console.error("Error: ", err)

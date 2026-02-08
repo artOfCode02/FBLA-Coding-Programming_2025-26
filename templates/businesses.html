@@ -9,37 +9,42 @@
 
 <body>
     <h1>Businesses:</h1>
+    <div id="businesses_container">
+        <div id="subject_body">
+            <table id="businesses_table"><tbody></tbody></table>
+            
+        </div>
 
-    <table id="businesses_table"><tbody></tbody></table>
+        <div id="inline_container">
+            <form id="change_username_form">
+                <label for="change_username_input" id="change_username_label">Change Username: </label>
+                <input type="text" id="change_username_input" name="change_username_input" value="Anonymous" required>
+                <button id="change_username_submit" type="submit">Change Username</button>
+            </form>
 
-    <div id="inline_container">
-        <form id="change_username_form">
-            <label for="change_username_input" id="change_username_label">Change Username: </label>
-            <input type="text" id="change_username_input" name="change_username_input" value="Anonymous" required>
-            <button id="change_username_submit" type="submit">Change Username</button>
-        </form>
+            <div id="vertical-rule"></div>
 
-        <div id="vertical-rule"></div>
+            <button id="change_current_location" type="button">Change Geolocation</button>
 
-        <button id="change_current_location" type="button">Change Geolocation</button>
+            <!-- Credits area inside the sticky settings bar; shown when scrolled to bottom -->
+            <div id="credits_in_bar" aria-hidden="true">
+                <span>Developed by David Banyeretse and Fischer Reed. Data provided by Geoapify.</span>
+            </div>
+        </div>
     </div>
 
     <dialog id="geolocation_dialog">
         <form id="geolocation_form">
             <label for="geolocation_input">Enter new location: </label>
-            
-            <input type="text" id="change_geolocation_street_address" 
-                name="geolocation_input" placeholder="123 Main St" required>
+            <div class="geo-row">
+                <input type="text" id="change_geolocation_street_address" 
+                    name="geolocation_input" placeholder="123 Main St" required autocomplete="street-address">
 
-            <br>
+                <input type="text" id="change_geolocation_city" 
+                    name="geolocation_city" placeholder="City" required autocomplete="address-level2">
 
-            <input type="text" id="change_geolocation_city" 
-                name="geolocation_city" placeholder="City" required>
-
-            <br>
-
-            <label for="change_geolocation_state" id="change_geolocation_state_label">State: </label>
-            <select id="change_geolocation_state" name="geolocation_state" required>
+                <label for="change_geolocation_state" id="change_geolocation_state_label">State: </label>
+                <select id="change_geolocation_state" name="geolocation_state" required autocomplete="address-level1">
                 <option value="" disabled selected hidden>Select State</option>
                 <option value="AL">Alabama</option>
                 <option value="AK">Alaska</option>
@@ -99,11 +104,6 @@
             <button type="button" id="geolocation_cancel">Cancel</button>
         </form>
     </dialog>
-
-    <footer>
-        <p>Developed by David Banyeretse, Fischer Reed, and Ah'mir McCray for FBLA Coding & Programming 2025-26.</p>
-        <p>Data provided by Geoapify.</p>
-    </footer>
 </body>
 
 </html>

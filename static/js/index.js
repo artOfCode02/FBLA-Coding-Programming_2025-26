@@ -56,27 +56,59 @@ export function index_form_handler() {
             console.log("Username entered:", username);
 
             // Cache businesses before redirecting
-            await getPlaces();
+            // Use any address set via the geolocation dialog (stored in localStorage)
+            const storedAddress = localStorage.getItem('selectedAddress') || '';
+            await getPlaces(storedAddress);
 
             // Navigate to businesses page with URL params
-            window.location.href = `/businesses?username=${encodeURIComponent(username)}`;
+            const addressParam = storedAddress ? `&address=${encodeURIComponent(storedAddress)}` : '';
+            window.location.href = `/businesses?username=${encodeURIComponent(username)}${addressParam}`;
         });
     } else {
         console.log("Init form NOT found on this page");
     }
 }
 
-// Link the back button
-export function make_back_button() {
-    // Back button @ review.html
-    const backButton = document.getElementById('redirect_back');
-    if(backButton) {
-        backButton.addEventListener('click', function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            const username = encodeURIComponent(urlParams.get('username'));
-            const category = encodeURIComponent(urlParams.get('category'));
+// -------------------------
+// Index Change Geolocation
+// -------------------------
+export function change_geolocation_handler_index() {
+    const changeLocationButton = document.getElementById('change_current_location');
+    const changeLocationDialog = document.getElementById('geolocation_dialog');
 
-            window.location.href = `/businesses?username=${username}&category=${category}`;
+    if (changeLocationButton && changeLocationDialog) {
+        changeLocationButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            changeLocationDialog.showModal();
         });
+
+        const geolocationForm = document.getElementById('geolocation_form');
+        const geolocationCancel = document.getElementById('geolocation_cancel');
+
+        if (geolocationForm && geolocationCancel) {
+            geolocationForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                let newLocation = document.getElementById('change_geolocation_street_address').value.trim();
+                newLocation += ", " + document.getElementById('change_geolocation_city').value.trim();
+                newLocation += ", " + document.getElementById('change_geolocation_state').value;
+
+                if (newLocation) {
+                    // Store chosen address so the main form can use it
+                    localStorage.setItem('selectedAddress', newLocation);
+                    changeLocationDialog.close();
+                    alert(`Location set to: ${newLocation}`);
+                } else {
+                    alert("Location cannot be empty.");
+                }
+            });
+
+            geolocationCancel.addEventListener('click', () => {
+                changeLocationDialog.close();
+            });
+        }
+    } else {
+        console.log("Change location button or dialog NOT found on this page");
     }
 }
+

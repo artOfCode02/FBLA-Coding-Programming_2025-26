@@ -20,3 +20,124 @@
 #change_geolocation_state_label {
     display: inline;
 }
+
+/* Layout for geolocation form: inline street / city / state */
+.geo-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 8px;
+}
+.geo-row input[type="text"], .geo-row select {
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(0,0,0,0.08);
+    background: #fff;
+    font-size: 0.95rem;
+}
+.geo-row input[type="text"] {
+    flex: 1 1 40%;
+}
+.geo-row select {
+    width: 110px;
+}
+
+/* Geolocation button styling (used on businesses and index pages) */
+#change_current_location {
+    background: linear-gradient(180deg,#f7d9b3,#e8b87a);
+    border: 1px solid #a56a2a;
+    padding: 8px 14px;
+    font-weight: 600;
+    color: #3b2a1f;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    cursor: pointer;
+}
+
+/* Business card styles */
+.business-card {
+    margin: 12px 0;
+}
+.business-card-cell {
+    background: #fff8f0;
+    border: 2px solid rgba(0,0,0,0.06);
+    border-radius: 10px;
+    padding: 14px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+}
+.biz-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #3b2a1f;
+    margin-bottom: 6px;
+}
+.biz-addr {
+    font-size: 0.95rem;
+    color: #5a4638;
+    margin-bottom: 10px;
+}
+.biz-controls {
+    display: flex;
+    gap: 8px;
+}
+.biz-controls button {
+    background: sandybrown;
+    border-radius: 6px;
+    padding: 6px 10px;
+    border: 1px solid rgba(0,0,0,0.08);
+    cursor: pointer;
+}
+
+/* Review card styles */
+.review-card { margin: 12px 0; }
+.review-card-cell {
+    background: #fffdf8;
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 10px;
+    padding: 12px 14px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.03);
+    position: relative;
+}
+.review-author {
+    font-weight: 800;
+    color: #2f241b;
+    margin-bottom: 6px;
+}
+.review-stars { color: #b36b1a; margin-bottom: 8px; }
+.review-text { color: #4b3a31; margin-bottom: 26px; white-space: pre-wrap; }
+.review-controls { position: absolute; right: 12px; bottom: 10px; }
+.review-delete { background: #f6c6b0; border: 1px solid rgba(0,0,0,0.08); padding: 6px 8px; border-radius: 6px; cursor: pointer; }
+
+/* Sticky settings bar at bottom */
+#inline_container {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg,#ffd69b,#f29f4a);
+    border-top: 2px solid rgba(0,0,0,0.08);
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: flex-start;
+    z-index: 9999;
+}
+
+#inline_container form { 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 8px; 
+}
+
+#credits_in_bar { 
+    margin-left: auto; 
+    color: #3b2a1f; 
+    font-weight: 600; 
+    opacity: 1; 
+}
+
+
+/* Ensure page content isn't hidden under sticky bar */
+body { 
+    padding-bottom: 86px; 
+}

@@ -58,13 +58,25 @@ body {
     background-color: #f1e7d4;
 }
 
-table, td, th {
-    border: 2px double black;
+/* Keep table structural but use card styling for rows */
+table {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0 12px;
+}
+td, th {
+	border: none;
+	padding: 0;
 }
 
 button {
-    border-radius: 5px;
-    background-color: sandybrown;
+    background: linear-gradient(180deg,#f7d9b3,#e8b87a);
+    border: 1px solid #a56a2a;
+    padding: 8px 14px;
+    font-weight: 600;
+    color: #3b2a1f;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    cursor: pointer;
 }
 
 textarea {

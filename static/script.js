@@ -1,7 +1,7 @@
 // ---------------------------
 // Import Important Functions
 // ---------------------------
-import { index_form_handler } from "./js/index.js";
+import { index_form_handler, change_geolocation_handler_index } from "./js/index.js";
 
 import { make_businesses_table, change_username_handler, change_geolocation_handler } from "./js/businesses.js";
 
@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log("On index page");
             // Call index form handler
             index_form_handler();
+            // Call index change geolocation handler (dialog on index page)
+            change_geolocation_handler_index();
             break;
         case '/businesses':
             console.log("On businesses page");
