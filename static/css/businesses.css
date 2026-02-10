@@ -24,12 +24,45 @@
     border-radius: 10px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.04);
     height: 100%;
+/* Container */
+#businesses_container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 93vh auto;
+    grid-template-areas: 
+        "businesses-table map"
+        "footer footer"
+    ;
+}
+
+
+/* Table section */
+#businesses_table {
+    grid-area: businesses-table;
+    overflow: auto;
+    height: 85vh;
+    margin: 25px;
+}
+
+
+/* Map section */
+#businesses_map {
+    grid-area: map;
+}
+
+
+/* Footer section */
+#businesses_footer {
+    grid-area: footer;
+    justify-self: center;
+    height: 0px;
 }
 
 #change_username_form, #change_username_label, #change_username_input, #change_username_submit {
     display: inline;
     width: auto;
 }
+
 
 #geolocation_dialog {
     border: 3px solid sienna;

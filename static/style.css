@@ -95,6 +95,6 @@ textarea {
 	padding-top: 35px;
 }
 
-#inline_containter {
+.inline_containter {
 	display: inline-block;
 }
