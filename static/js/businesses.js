@@ -153,22 +153,27 @@ export async function make_businesses_table() {
             // Render each business as a card-like row
             businesses.forEach(biz => {
                 const newRow = document.createElement('tr');
-                newRow.classList.add('business-card');
+                newRow.classList.add('business_card');
+                // mark the row with the business id for map interaction
+                if (biz.id !== undefined && biz.id !== null) {
+                    newRow.dataset.businessId = biz.id;
+                    newRow.id = `business_${biz.id}`;
+                }
 
                 const cell = document.createElement('td');
                 cell.colSpan = 5;
-                cell.classList.add('business-card-cell');
+                cell.classList.add('business_card_cell');
 
                 const nameEl = document.createElement('div');
-                nameEl.classList.add('biz-name');
+                nameEl.classList.add('biz_name');
                 nameEl.textContent = biz.name;
 
                 const addrEl = document.createElement('div');
-                addrEl.classList.add('biz-addr');
+                addrEl.classList.add('biz_addr');
                 addrEl.textContent = `${biz.street} • ${biz.city}`;
 
                 const controlsEl = document.createElement('div');
-                controlsEl.classList.add('biz-controls');
+                controlsEl.classList.add('biz_controls');
 
                 const bookmarkButton = document.createElement('button');
                 bookmark_check(bookmarkButton, biz.id);
@@ -192,6 +197,39 @@ export async function make_businesses_table() {
                 cell.appendChild(nameEl);
                 cell.appendChild(addrEl);
                 cell.appendChild(controlsEl);
+
+                // highlight marker when hovering list item (vice versa)
+                newRow.addEventListener('mouseenter', () => {
+                    try {
+                        const marker = window.businessMarkers && window.businessMarkers[biz.id];
+                        // If marker exists and map is available, pan/center map to it when outside bounds
+                        if (marker && window.businessMap) {
+                            try {
+                                const latlng = marker.getLatLng && marker.getLatLng();
+                                const bounds = window.businessMap.getBounds && window.businessMap.getBounds();
+                                if (latlng && bounds && !bounds.contains(latlng)) {
+                                    try { window.businessMap.flyTo(latlng, window.businessMap.getZoom(), { duration: 0.6 }); } catch (e) { window.businessMap.panTo(latlng); }
+                                }
+                            } catch (e) {
+                                console.warn('Error while ensuring marker is in view', e);
+                            }
+                            try { marker.openTooltip(); } catch (e) {}
+                        } else if (marker) {
+                            try { marker.openTooltip(); } catch (e) {}
+                        }
+
+                        newRow.classList.add('list-highlight');
+                    } catch (e) { console.warn('Error highlighting marker from list hover', e); }
+                });
+                newRow.addEventListener('mouseleave', () => {
+                    try {
+                        const marker = window.businessMarkers && window.businessMarkers[biz.id];
+                        if (marker) {
+                            try { marker.closeTooltip(); } catch (e) {}
+                        }
+                        newRow.classList.remove('list-highlight');
+                    } catch (e) { console.warn('Error removing marker highlight from list leave', e); }
+                });
 
                 newRow.appendChild(cell);
                 tbody.appendChild(newRow);

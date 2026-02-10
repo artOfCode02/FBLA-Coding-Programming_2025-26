@@ -22,7 +22,7 @@
     </form>
 
     <dialog id="geolocation_dialog">
-        <form id="geolocation_form">
+        <form id="geolocation_form" class="geo_row">
             <label for="geolocation_input">Enter new location: </label>
             <input type="text" id="change_geolocation_street_address" 
                     name="geolocation_input" placeholder="123 Main St" required autocomplete="street-address">
@@ -30,7 +30,6 @@
                 <input type="text" id="change_geolocation_city" 
                     name="geolocation_city" placeholder="City" required autocomplete="address-level2">
 
-                <label for="change_geolocation_state" id="change_geolocation_state_label">State: </label>
                 <select id="change_geolocation_state" name="geolocation_state" required autocomplete="address-level1">
                 <option value="" disabled selected hidden>Select State</option>
                 <option value="AL">Alabama</option>
@@ -87,8 +86,10 @@
             
             <br>
 
-            <button type="submit">Update Location</button>
-            <button type="button" id="geolocation_cancel">Cancel</button>
+            <div id="bottom_buttons_container">
+                <button type="submit">Update Location</button>
+                <button type="button" id="geolocation_cancel">Cancel</button>
+            </div>
         </form>
     </dialog>
 </body>

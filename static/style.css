@@ -1,6 +1,7 @@
 /* Import styles from index.css */
 @import url('css/index.css');
 @import url('css/businesses.css');
+@import url('css/reviews.css');
 
 
 /* http://meyerweb.com/eric/tools/css/reset/ 
@@ -28,6 +29,7 @@ time, mark, audio, video {
 	font: inherit;
 	vertical-align: baseline;
 }
+
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure, 
 footer, header, hgroup, menu, nav, section {
@@ -85,7 +87,7 @@ textarea {
     margin-right: 20px;
 }
 
-#vertical-rule {
+#vertical_rule {
 	border-left: 2px solid black;
 	height: 100%;
 	display: inline-block;

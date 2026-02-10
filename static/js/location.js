@@ -53,6 +53,18 @@ export async function getPlaces(address="") {
         console.warn('Using default location:', loc);
     }
 
+    // Set location into localStorage for later use
+    try {
+        localStorage.setItem('selectedLocation', JSON.stringify(loc));
+        if (address) {
+            localStorage.setItem('selectedAddress', address);
+        } else {
+            localStorage.removeItem('selectedAddress');
+        }
+    } catch (err) {
+        console.warn('Failed to write location to localStorage:', err);
+    }
+
     const { lat, lon } = loc;
     console.log('Using coordinates:', lat, lon);
 
@@ -88,7 +100,9 @@ export async function getPlaces(address="") {
                 id: props.place_id,
                 name: props.name,
                 street: props.street,
-                city: region
+                city: region,
+                lat: props.lat,
+                lon: props.lon
             };
             console.log('Found business:', business);
 

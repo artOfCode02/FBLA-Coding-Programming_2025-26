@@ -1,3 +1,31 @@
+#subject_body {
+    display: flex;
+    gap: 20px;
+    margin: 2px 2px 86px 2px;
+    height: calc(100vh - 86px);
+}
+
+/* Container that holds the businesses list and scrolls internally */
+#businesses_list {
+    flex: 1 1 35%;
+    max-height: 100%;
+    overflow: auto;
+}
+
+#businesses_table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 12px;
+}
+
+#businesses_map {
+    flex: 1 1 65%;
+    border: 2px solid rgba(0,0,0,0.08);
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+    height: 100%;
+}
+
 #change_username_form, #change_username_label, #change_username_input, #change_username_submit {
     display: inline;
     width: auto;
@@ -22,25 +50,34 @@
 }
 
 /* Layout for geolocation form: inline street / city / state */
-.geo-row {
+.geo_row {
     display: flex;
-    gap: 8px;
+    flex-wrap: wrap;
+    gap: 1px;
     align-items: center;
     margin-top: 8px;
 }
-.geo-row input[type="text"], .geo-row select {
-    padding: 8px 10px;
-    border-radius: 6px;
-    border: 1px solid rgba(0,0,0,0.08);
-    background: #fff;
-    font-size: 0.95rem;
+
+.geo_row > #change_geolocation_street_address {
+    flex: 0 0 100%;
 }
-.geo-row input[type="text"] {
-    flex: 1 1 40%;
+
+.geo_row > #change_geolocation_city {
+    flex: 1 1 60%;
 }
-.geo-row select {
-    width: 110px;
+
+.geo_row > #change_geolocation_state {
+    flex: 0 0 35%;
 }
+
+.geo_row > #bottom_buttons_container {
+    flex: 0 0 100%;
+}
+
+#geolocation_cancel {
+    float: right;
+}
+
 
 /* Geolocation button styling (used on businesses and index pages) */
 #change_current_location {
@@ -54,32 +91,32 @@
 }
 
 /* Business card styles */
-.business-card {
+.business_card {
     margin: 12px 0;
 }
-.business-card-cell {
+.business_card_cell {
     background: #fff8f0;
     border: 2px solid rgba(0,0,0,0.06);
     border-radius: 10px;
     padding: 14px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.04);
 }
-.biz-name {
+.biz_name {
     font-size: 1.1rem;
     font-weight: 700;
     color: #3b2a1f;
     margin-bottom: 6px;
 }
-.biz-addr {
+.biz_addr {
     font-size: 0.95rem;
     color: #5a4638;
     margin-bottom: 10px;
 }
-.biz-controls {
+.biz_controls {
     display: flex;
     gap: 8px;
 }
-.biz-controls button {
+.biz_controls button {
     background: sandybrown;
     border-radius: 6px;
     padding: 6px 10px;
@@ -87,25 +124,22 @@
     cursor: pointer;
 }
 
-/* Review card styles */
-.review-card { margin: 12px 0; }
-.review-card-cell {
-    background: #fffdf8;
-    border: 1px solid rgba(0,0,0,0.06);
-    border-radius: 10px;
-    padding: 12px 14px;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.03);
-    position: relative;
+/* Highlighting when hovering between map and list */
+.list-highlight .business_card_cell {
+    box-shadow: 0 10px 30px rgba(192,110,42,0.18);
+    border-color: #c07a2a;
 }
-.review-author {
-    font-weight: 800;
-    color: #2f241b;
-    margin-bottom: 6px;
+
+/* Leaflet marker visual highlight (when available) */
+.leaflet-marker-icon.marker-highlight {
+    /* Avoid changing the marker's bounding box (no transform) to prevent mouseout flicker */
+    transform: none !important;
+    filter: drop-shadow(0 8px 18px rgba(192,110,42,0.28));
+    z-index: 9999 !important;
+    opacity: 0.98;
 }
-.review-stars { color: #b36b1a; margin-bottom: 8px; }
-.review-text { color: #4b3a31; margin-bottom: 26px; white-space: pre-wrap; }
-.review-controls { position: absolute; right: 12px; bottom: 10px; }
-.review-delete { background: #f6c6b0; border: 1px solid rgba(0,0,0,0.08); padding: 6px 8px; border-radius: 6px; cursor: pointer; }
+
+
 
 /* Sticky settings bar at bottom */
 #inline_container {

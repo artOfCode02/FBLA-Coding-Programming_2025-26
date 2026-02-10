@@ -2,8 +2,9 @@
 <html>
 
 <head>
-    <title>List of businesses</title>
-    <script type="module" src="{{ url_for('static', filename='script.js') }}" defer></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='leaflet/leaflet.css') }}">
+    <script src="{{ url_for('static', filename='leaflet/leaflet.js') }}" defer></script>
+    <script type="module" src="{{ url_for('static', filename='script.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
@@ -11,8 +12,11 @@
     <h1>Businesses:</h1>
     <div id="businesses_container">
         <div id="subject_body">
-            <table id="businesses_table"><tbody></tbody></table>
-            
+            <div id="businesses_list">
+                <table id="businesses_table"><tbody></tbody></table>
+            </div>
+
+            <div id="businesses_map"></div>
         </div>
 
         <div id="inline_container">
@@ -22,7 +26,7 @@
                 <button id="change_username_submit" type="submit">Change Username</button>
             </form>
 
-            <div id="vertical-rule"></div>
+            <div id="vertical_rule"></div>
 
             <button id="change_current_location" type="button">Change Geolocation</button>
 
@@ -36,14 +40,13 @@
     <dialog id="geolocation_dialog">
         <form id="geolocation_form">
             <label for="geolocation_input">Enter new location: </label>
-            <div class="geo-row">
+            <div class="geo_row">
                 <input type="text" id="change_geolocation_street_address" 
                     name="geolocation_input" placeholder="123 Main St" required autocomplete="street-address">
 
                 <input type="text" id="change_geolocation_city" 
                     name="geolocation_city" placeholder="City" required autocomplete="address-level2">
 
-                <label for="change_geolocation_state" id="change_geolocation_state_label">State: </label>
                 <select id="change_geolocation_state" name="geolocation_state" required autocomplete="address-level1">
                 <option value="" disabled selected hidden>Select State</option>
                 <option value="AL">Alabama</option>
@@ -100,10 +103,10 @@
             
             <br>
 
-            <button type="submit">Update Location</button>
-            <button type="button" id="geolocation_cancel">Cancel</button>
-        </form>
-    </dialog>
+            <div id="bottom_buttons_container">
+                <button type="submit">Update Location</button>
+                <button type="button" id="geolocation_cancel">Cancel</button>
+            </div>
 </body>
 
 </html>

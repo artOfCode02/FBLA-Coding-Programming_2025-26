@@ -97,6 +97,22 @@ export async function make_reviews_table() {
         // Clear existing content and render review cards
         reviewsTable.innerHTML = '';
 
+        // If there are no reviews at all, show a greyed-out message
+        let hasAny = false;
+        for (const k in data) {
+            if (Array.isArray(data[k]) && data[k].length > 0) { hasAny = true; break; }
+        }
+        if (!hasAny) {
+            const newRow = document.createElement('tr');
+            const cell = document.createElement('td');
+            cell.colSpan = 3;
+            cell.classList.add('no_reviews');
+            cell.textContent = 'No Reviews Present';
+            newRow.appendChild(cell);
+            reviewsTable.appendChild(newRow);
+            return;
+        }
+
         for (const row_username in data) {
             const userReviews = data[row_username];
 
@@ -106,20 +122,20 @@ export async function make_reviews_table() {
 
                 // Create row and single cell containing a review card
                 const newRow = document.createElement('tr');
-                newRow.classList.add('review-card');
+                newRow.classList.add('review_card');
 
                 const cell = document.createElement('td');
                 cell.colSpan = 3;
-                cell.classList.add('review-card-cell');
+                cell.classList.add('review_card_cell');
 
                 // Author (bold) at top
                 const authorEl = document.createElement('div');
-                authorEl.classList.add('review-author');
+                authorEl.classList.add('review_author');
                 authorEl.textContent = row_username;
 
                 // Stars
                 const starsEl = document.createElement('div');
-                starsEl.classList.add('review-stars');
+                starsEl.classList.add('review_stars');
                 switch (stars) {
                     case '1': starsEl.textContent = '★ ☆ ☆ ☆ ☆'; break;
                     case '2': starsEl.textContent = '★ ★ ☆ ☆ ☆'; break;
@@ -131,19 +147,19 @@ export async function make_reviews_table() {
 
                 // Review text
                 const textEl = document.createElement('div');
-                textEl.classList.add('review-text');
+                textEl.classList.add('review_text');
                 textEl.textContent = text;
 
                 // Controls container (delete button placed bottom-right)
                 const controlsEl = document.createElement('div');
-                controlsEl.classList.add('review-controls');
+                controlsEl.classList.add('review_controls');
 
                 if (row_username === username) {
                     const deleteButton = document.createElement('button');
-                    deleteButton.classList.add('review-delete');
+                    deleteButton.classList.add('review_delete');
                     deleteButton.textContent = 'Delete Review';
                     deleteButton.addEventListener('click', async () => {
-                        const confirmation = confirm('Are you sure you want to delete your review(s)?');
+                        const confirmation = confirm('Are you sure you want to delete your review?');
                         if (!confirmation) return;
 
                         try {

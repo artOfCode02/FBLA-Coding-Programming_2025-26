@@ -1,6 +1,7 @@
-from PyQt6.QtWidgets import QApplication
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QSizePolicy
 from PyQt6.QtWebEngineWidgets import QWebEngineView
-from PyQt6.QtCore import QUrl, QTimer
+from PyQt6.QtCore import QUrl, QTimer, Qt
+from PyQt6.QtGui import QFontMetrics
 from PyQt6.QtWebEngineCore import QWebEnginePermission
 
 import os
@@ -64,22 +65,6 @@ def run_open_dev_tools():
         return jsonify({"success": False, "message": str(e)}), 500
 ############################################################################
 
-# Set geolcation permissions to true for navigator.geolcation.getCurrentPosition()
-def handle_permissions(view, security_origin, permission_type):
-    if permission_type == QWebEnginePermission.PermissionType.Geolocation:
-        permission = view.page().permission(security_origin, permission_type)
-        permission.grant()
-        print(f"Granted geolocation permission for {security_origin.toString()}")
-
-
-# Delete businesses cache file
-def delete_businesses_cache():
-    try:
-        if 'businesses_cache.json' in os.listdir():
-            os.remove('businesses_cache.json')
-            print("Deleted businesses_cache.json")
-    except Exception as e:
-        print(f"Error deleting businesses cache: {e}")
 
 # Close dev tools window on exit
 def close_dev_tools(view):
@@ -92,8 +77,8 @@ def close_dev_tools(view):
 
 # Cleanup function to be called on exit
 def perform_cleanup(view):
-    delete_businesses_cache()
     close_dev_tools(view)
+
 
 # Main thread function
 def main():
@@ -106,11 +91,102 @@ def main():
     Qapp = QApplication(sys.argv)
     view = QWebEngineView()
     view.load(QUrl("http://127.0.0.1:5000"))
-    view.setWindowTitle("FBLA Coding & Programming 2025-26")
-    view.page().featurePermissionRequested.connect(
-        lambda security_origin, permission_type: handle_permissions(view, security_origin, permission_type)
-    )
-    view.showMaximized()
+
+    # Build a simple navigation bar (non-editable URL display)
+    main_window = QWidget()
+    main_layout = QVBoxLayout()
+
+    nav_bar = QWidget()
+    nav_layout = QHBoxLayout()
+
+    back_btn = QPushButton("◀")
+    forward_btn = QPushButton("▶")
+    reload_btn = QPushButton("⟳")
+    devtools_btn = QPushButton("DevTools")
+
+    url_label = QLabel()
+    initial_url = "http://127.0.0.1:5000"
+    url_label.setStyleSheet("""QLabel {
+                                padding: 2px; 
+                                background: #fff; 
+                                border: 1px solid #ccc;
+                            }""")
+
+    # store the full URL and display an elided version in the label
+    full_url = [initial_url]
+
+    def update_url_label():
+        text = full_url[0] or ''
+        fm = QFontMetrics(url_label.font())
+        avail = max(20, url_label.width() - 20)
+        try:
+            elided = fm.elidedText(text, Qt.TextElideMode.ElideRight, avail)
+        except Exception:
+            # fallback in case of API differences
+            elided = fm.elidedText(text, Qt.ElideRight, avail)
+        url_label.setText(elided)
+
+    # Layout behavior: make URL label expand to fill remaining space
+    nav_layout.addWidget(back_btn)
+    nav_layout.addWidget(forward_btn)
+    nav_layout.addWidget(reload_btn)
+    # URL label should occupy remaining horizontal space and be one line high
+    url_label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+    fm = url_label.fontMetrics()
+    url_label.setFixedHeight(fm.height() + 8)
+    nav_layout.addWidget(url_label, 1)
+    nav_layout.addWidget(devtools_btn)
+    nav_bar.setLayout(nav_layout)
+
+        # Slightly grey out the nav area to indicate immutability
+    url_label.setStyleSheet("background-color: #a3a3a3; color: #333; padding: 1px;")
+    
+    # Tighten nav layout spacing and fix nav bar height so it stays small
+    nav_layout.setContentsMargins(2, 2, 2, 2)
+    nav_layout.setSpacing(6)
+    nav_bar.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+    nav_bar.setFixedHeight(fm.height() + 12)
+
+    main_layout.addWidget(nav_bar, 0)
+    main_layout.addWidget(view, 1)
+    main_layout.setStretch(0, 0)
+    main_layout.setStretch(1, 1)
+    main_window.setLayout(main_layout)
+    main_window.setWindowTitle("FBLA Coding & Programming 2025-26")
+
+    # Wire up navigation controls
+    back_btn.clicked.connect(lambda: view.back())
+    forward_btn.clicked.connect(lambda: view.forward())
+    reload_btn.clicked.connect(lambda: view.reload())
+    devtools_btn.clicked.connect(lambda: open_dev_tools(view))
+
+    # Update the URL label when navigation happens (keep full URL and elide for display)
+    def on_url_changed(qurl):
+        try:
+            full_url[0] = qurl.toString()
+        except Exception:
+            full_url[0] = str(qurl)
+        update_url_label()
+
+    view.urlChanged.connect(on_url_changed)
+
+    # Update elided label when window is resized so text re-elides to new width
+    def on_resize(event):
+        try:
+            update_url_label()
+        except Exception:
+            pass
+        return QWidget.resizeEvent(main_window, event)
+
+    main_window.resizeEvent = on_resize
+
+    # initialize displayed (elided) URL
+    try:
+        update_url_label()
+    except Exception:
+        url_label.setText(full_url[0])
+
+    main_window.showMaximized()
     
     # Qt timer runs on main thread to process commands from Flask
     timer = QTimer()

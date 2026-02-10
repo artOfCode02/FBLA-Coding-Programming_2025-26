@@ -7,6 +7,8 @@ import { make_businesses_table, change_username_handler, change_geolocation_hand
 
 import { review_title, review_form_handler, make_reviews_table, back_button_handler } from "./js/reviews.js";
 
+import { init_map } from "./js/map.js";
+
 // Ensure document is ready before processing
 document.addEventListener('DOMContentLoaded', function () {
     console.log("DOM READY");
@@ -27,6 +29,8 @@ document.addEventListener('DOMContentLoaded', function () {
             change_username_handler();
             // Call change geolocation handler
             change_geolocation_handler();
+            // Call map initialization
+            init_map();
             break;
         case '/reviews':
             console.log("On reviews page");

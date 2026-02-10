@@ -24,6 +24,10 @@
     box-shadow: inset 0 -2px 0 rgba(0,0,0,0.06);
 }
 
+#change_current_location {
+    margin: 5px 0px;
+}
+
 /* Form rows and labels */
 label {
     display: block;
@@ -32,12 +36,12 @@ label {
     font-weight: 600;
 }
 
-.form-row {
+.form_row {
     margin-bottom: 12px;
 }
 
 /* Text inputs */
-input[type="text"], input[type="email"], input[type="password"], textarea {
+input[type="text"], input[type="email"], input[type="password"], textarea, select {
     width: 100%;
     box-sizing: border-box;
     border: 2px solid rgba(0,0,0,0.65);
@@ -71,7 +75,7 @@ button:hover, input[type="submit"]:hover {
 }
 
 /* Small helper text */
-.form-help {
+.form_help {
     font-size: 0.85rem;
     color: rgba(0,0,0,0.6);
 }
