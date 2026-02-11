@@ -43,4 +43,4 @@ print("Dependencies installed.")
 # Run the app
 # -----------------------------
 print("Running the app...")
-subprocess.check_call([python_exe, "run_app.py"])
+subprocess.check_call([python_exe, "run_app.py", "--disable-gpu"])
