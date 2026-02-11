@@ -288,7 +288,7 @@ export async function make_businesses_table() {
                 fetch_avg_star_rating(biz).then(avg => {
                     if (avg !== null) {
                         newRow.dataset.avgStars = avg;
-                        ravg = avg.tofixed(1);
+                        ravg = avg.toFixed(1);
                     }
                 }).catch(err => {
                     console.warn('Failed to fetch average star rating for businessID', biz.id, err);
