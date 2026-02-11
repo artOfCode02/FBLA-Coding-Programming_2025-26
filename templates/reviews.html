@@ -7,19 +7,14 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div id="reviews_nav">
+    <div id="reviews_nav" class="inline_container">
         <button id="redirect_back">&lt;&lt; Back to Businesses</button>
-        <div class="inline_container">
-            <form id="change_username_form">
-                <label for="change_username_input" id="change_username_label">Change Username: </label>
-                <input type="text" id="change_username_input" name="change_username_input" value="Anonymous" required>
-                <button id="change_username_submit" type="submit">Change Username</button>
-            </form>
 
-            <div id="vertical_rule"></div>
-
-            <button id="change_current_location" type="button">Change Geolocation</button>
-        </div>
+        <form id="change_username_form">
+            <label for="change_username_input" id="change_username_label">Change Username: </label>
+            <input type="text" id="change_username_input" name="change_username_input" value="Anonymous" required>
+            <button id="change_username_submit" type="submit">Change Username</button>
+        </form>
     </div>
 
     <div id="reviews_container">

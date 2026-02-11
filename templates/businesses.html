@@ -9,10 +9,20 @@
 </head>
 
 <body>
-    <h1>Businesses:</h1>
     <div id="businesses_container">
         <div id="subject_body">
             <div id="businesses_list">
+                <div id="business_search_container" style="display:flex;gap:8px;align-items:center;">
+                    <input id="business_search" type="search" placeholder="Search businesses (name, address)" aria-label="Search businesses" />
+                    <select id="business_sort" aria-label="Sort businesses">
+                        <option value="relevance">Relevance</option>
+                        <option value="bookmarked">Bookmarked First</option>
+                        <option value="alpha">Alphabetical</option>
+                        <option value="distance">Distance</option>
+                        <option value="reviews">Most Reviews</option>
+                        <option value="avg_stars">Highest Average Stars</option>
+                    </select>
+                </div>
                 <table id="businesses_table"><tbody></tbody></table>
             </div>
 
@@ -32,7 +42,7 @@
 
             <!-- Credits area inside the sticky settings bar; shown when scrolled to bottom -->
             <div id="credits_in_bar" aria-hidden="true">
-                <span>Developed by David Banyeretse and Fischer Reed. Data provided by Geoapify.</span>
+                <span>Developed by David Banyeretse, Fischer Reed, and Ah'mir McCray. Data provided by Geoapify.</span>
             </div>
         </div>
     </div>

@@ -178,52 +178,54 @@ def remove_bookmark():
             "message": "Request must be JSON."
         }), 400
     
+@app.route("/review-count")
+def fetch_review_count():
+    businessID = request.args.get('businessID')
 
-# Store businesses into cache for faster loading
-@app.route('/store-businesses-cache', methods=['POST'])
-def cache_businesses():
-    if request.is_json:
-        data = request.get_json()
+    if not businessID:
+        return jsonify({
+            "success": False,
+            "message": "Missing required field (businessID)."
+        }), 400
 
-        # Validate data
-        if not data:
-            return jsonify({"success": False, "message": "No data provided."}), 400
+    reviewData = load_reviews()
+    count = len(reviewData.get(businessID, {}))
 
-        # Remove old cache if it exists
-        if 'businesses_cache.json' in os.listdir():
-            os.remove('businesses_cache.json')
+    return jsonify({
+        "success": True,
+        "count": count
+    }), 200
 
-        # Save new cache
-        with open('businesses_cache.json', 'w') as f:
-            json.dump(data, f, indent=2)
+@app.route("/average-stars")
+def fetch_average_ratings():
+    businessID = request.args.get('businessID')
 
-        return jsonify({"success": True, "message": "Businesses cached successfully."}), 200
+    if not businessID:
+        return jsonify({
+            "success": False,
+            "message": "Missing required field (businessID)."
+        }), 400
 
-    else:
-        return jsonify({"success": False, "message": "Request must be JSON."}), 400
+    reviewData = load_reviews()
+    business_reviews = reviewData.get(businessID, {})
+    total_stars = 0
+    total_reviews = 0
 
-# Load businesses from cache
-@app.route('/load-businesses-cache')
-def load_businesses_cache():
-    if os.path.exists('businesses_cache.json'):
-        with open('businesses_cache.json', 'r') as f:
-            data = json.load(f)
+    for user_reviews in business_reviews.values():
+        for stars, _ in user_reviews:
+            fstars = float(stars)
 
-        return jsonify(data), 200
-    else:
-        return jsonify({"success": False, "message": "No cache found."}), 404
+            total_stars += fstars
+            total_reviews += 1
+    
+    average_stars = total_stars / total_reviews if total_reviews > 0 else 0
 
-# Clear businesses cache
-@app.route('/clear-businesses-cache')
-def clear_businesses_cache():
-    try:
-        if 'businesses_cache.json' in os.listdir():
-            os.remove('businesses_cache.json')
-            return jsonify({"success": True, "message": "Businesses cache cleared."}), 200
-        else:
-            return jsonify({"success": True, "message": "No cache found."}), 200
-    except Exception as e:
-        return jsonify({"success": False, "message": str(e)}), 500
+    return jsonify({
+        "success": True,
+        "average_stars": average_stars
+    }), 200
+
+
 ############################################################################
 
 ##########################--- REVIEWS ---##################################

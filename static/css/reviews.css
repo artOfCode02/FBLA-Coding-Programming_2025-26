@@ -1,8 +1,8 @@
 #reviews_container {
     display: flex;
     gap: 20px;
-    margin: 2px 2px 2px 2px;
-    height: 93vh;
+    margin: 5px;
+    height: 90vh;
 }
 
 /* Top navigation bar for reviews page */
@@ -16,6 +16,8 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    display: flex;
+    justify-content: space-between;
 }
 
 #reviews_nav button {
@@ -62,6 +64,9 @@
     resize: vertical;
 }
 
+span#write_username, span#write_business_name {
+    font-weight: bold;
+}
 
 /* Review card styles */
 .review_card { 

@@ -55,14 +55,20 @@ export function index_form_handler() {
 
             console.log("Username entered:", username);
 
+            // Persist username in localStorage so other pages can read it
+            try { 
+                localStorage.setItem('username', username); 
+            } catch (err) { 
+                console.warn('Failed to save username to localStorage', err); 
+            }
+
             // Cache businesses before redirecting
             // Use any address set via the geolocation dialog (stored in localStorage)
             const storedAddress = localStorage.getItem('selectedAddress') || '';
             await getPlaces(storedAddress);
 
-            // Navigate to businesses page with URL params
-            const addressParam = storedAddress ? `&address=${encodeURIComponent(storedAddress)}` : '';
-            window.location.href = `/businesses?username=${encodeURIComponent(username)}${addressParam}`;
+            // Navigate to businesses page; username and address are stored in localStorage
+            window.location.href = `/businesses`;
         });
     } else {
         console.log("Init form NOT found on this page");

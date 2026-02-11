@@ -200,7 +200,7 @@ export function back_button_handler() {
     const backButton = document.getElementById('redirect_back');
     if(backButton) {
         backButton.addEventListener('click', function () {
-            window.location.href = `/businesses?username=${username}`;
+            window.location.href = `/businesses`;
         });
     }
 }

@@ -1,11 +1,24 @@
 // ---------------------------
 // Import Important Functions
 // ---------------------------
-import { index_form_handler, change_geolocation_handler_index } from "./js/index.js";
+import { 
+    index_form_handler,
+    change_geolocation_handler_index
+} from "./js/index.js";
 
-import { make_businesses_table, change_geolocation_handler } from "./js/businesses.js";
+import { 
+    setup_business_search, 
+    make_businesses_table, 
+    change_geolocation_handler, 
+    setup_business_sort 
+} from "./js/businesses.js";
 
-import { review_title, review_form_handler, make_reviews_table, back_button_handler } from "./js/reviews.js";
+import { 
+    review_title, 
+    review_form_handler, 
+    make_reviews_table, 
+    back_button_handler 
+} from "./js/reviews.js";
 
 import { init_map } from "./js/map.js";
 
@@ -23,6 +36,10 @@ document.addEventListener('DOMContentLoaded', function () {
             break;
         case '/businesses':
             console.log("On businesses page");
+            // Call search filter handler
+            setup_business_search();
+            // Call sort filter handler
+            setup_business_sort();
             // Call businesses table handler
             make_businesses_table();
             // Call change username handler
@@ -74,7 +91,7 @@ document.addEventListener('keydown', (event) => {
 // -------------------------
 // Change Username Handler
 // -------------------------
-export function change_username_handler() {
+function change_username_handler() {
     const changeUsernameForm = document.getElementById('change_username_form');
 
     if(changeUsernameForm) {
