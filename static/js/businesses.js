@@ -1,8 +1,7 @@
 import { getPlaces } from './location.js';
 
 // GLOBAL VARIABLES
-const urlParams = new URLSearchParams(window.location.search);
-const username = urlParams.get("username") || "Anonymous";
+const username = localStorage.getItem("username") || "Anonymous";
 
 // -------------------------
 // Bookmark Management
@@ -241,37 +240,6 @@ export async function make_businesses_table() {
     } else {
         console.log("Businesses table NOT found on this page");
     }  
-}
-
-// -------------------------
-// Change Username Handler
-// -------------------------
-export function change_username_handler() {
-    const changeUsernameForm = document.getElementById('change_username_form');
-
-    if(changeUsernameForm) {
-        changeUsernameForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-
-            const confirmation = confirm("Are you sure you want to change your username? This will reload the page.");
-            if(!confirmation) return;
-
-            const newUsername = document.getElementById('change_username_input').value.trim();
-            if(newUsername) {
-                // Update URL with new username param
-                console.log("Changing username to:", newUsername);
-                const urlParams = new URLSearchParams(window.location.search);
-                urlParams.set('username', newUsername);
-                window.location.search = urlParams.toString();
-
-                alert(`Username changed to: ${newUsername}`);
-            } else {
-                alert("Username cannot be empty.");
-            }
-        });
-    } else {
-        console.log("Change username form NOT found on this page");
-    }
 }
 
 // -------------------------

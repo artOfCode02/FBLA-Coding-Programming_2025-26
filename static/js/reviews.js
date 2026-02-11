@@ -1,7 +1,7 @@
 // CONSTANTS
 // URL parameters
 const urlParams = new URLSearchParams(window.location.search);
-const username = urlParams.get('username') || "Anonymous";
+const username = localStorage.getItem('username') || 'Anonymous';
 const businessID = urlParams.get('businessID');
 const businessName = urlParams.get('businessName');
 
@@ -11,14 +11,10 @@ export function review_title() {
     console.log("Running review title function");
 
     const write_username = document.getElementById('write_username');
-    if(write_username) {
-        write_username.innerHTML = username
-    }
+    if(write_username) write_username.innerHTML = username;
 
     const write_business_name = document.getElementById('write_business_name');
-    if(write_business_name) {
-        write_business_name.innerHTML = businessName
-    }
+    if(write_business_name) write_business_name.innerHTML = businessName;
 }
 
 // Write a review and submit it to reviews.json

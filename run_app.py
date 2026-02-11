@@ -138,7 +138,7 @@ def main():
     nav_layout.addWidget(devtools_btn)
     nav_bar.setLayout(nav_layout)
 
-        # Slightly grey out the nav area to indicate immutability
+    # Slightly grey out the nav area to indicate immutability
     url_label.setStyleSheet("background-color: #a3a3a3; color: #333; padding: 1px;")
     
     # Tighten nav layout spacing and fix nav bar height so it stays small

@@ -3,7 +3,7 @@
 // ---------------------------
 import { index_form_handler, change_geolocation_handler_index } from "./js/index.js";
 
-import { make_businesses_table, change_username_handler, change_geolocation_handler } from "./js/businesses.js";
+import { make_businesses_table, change_geolocation_handler } from "./js/businesses.js";
 
 import { review_title, review_form_handler, make_reviews_table, back_button_handler } from "./js/reviews.js";
 
@@ -34,6 +34,8 @@ document.addEventListener('DOMContentLoaded', function () {
             break;
         case '/reviews':
             console.log("On reviews page");
+            // Call change reviews username handler
+            change_username_handler();
             // Call review title function
             review_title();
             // Call review form handler
@@ -68,3 +70,35 @@ document.addEventListener('keydown', (event) => {
             });
     }
 });
+
+// -------------------------
+// Change Username Handler
+// -------------------------
+export function change_username_handler() {
+    const changeUsernameForm = document.getElementById('change_username_form');
+
+    if(changeUsernameForm) {
+        changeUsernameForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const confirmation = confirm("Are you sure you want to change your username? This will reload the page.");
+            if(!confirmation) return;
+
+            const newUsername = document.getElementById('change_username_input').value.trim();
+            if(newUsername) {
+                // Update URL with new username param
+                console.log("Changing username to:", newUsername);
+
+                localStorage.setItem('username', newUsername);
+
+                location.reload();
+                
+                alert(`Username changed to: ${newUsername}`);
+            } else {
+                alert("Username cannot be empty.");
+            }
+        });
+    } else {
+        console.log("Change username form NOT found on this page");
+    }
+}

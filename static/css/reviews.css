@@ -25,6 +25,10 @@
     cursor: pointer;
 }
 
+#reviews_change_username {
+    float: right;
+}
+
 #reviews_list {
     flex: 0 0 65%;
     max-height: 100%;
