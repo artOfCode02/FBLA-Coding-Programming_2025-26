@@ -352,30 +352,39 @@ def all_reviews():
 ############################################################################
 
 ###########################--- LOCATION ---#################################
+GEOAPIFY_KEY = "fdcb2789a931407f84d539feaf6621fb" # Geoapify API key
+
 @app.route('/get-location-from-address')
 def get_location_from_address():
     address = request.args.get('address')
     if not address:
-        return jsonify({"success": False, "message": "No address."}), 404
-    
-    try:
-        # Create a custom SSL context with certifi certificates
-        ctx = ssl.create_default_context(cafile=certifi.where())
-        options.default_ssl_context = ctx
+        return jsonify({"success": False, "message": "No address provided"}), 400
 
-        geolocator = Nominatim(user_agent="fbla_coding_programming_app", timeout=3)
-        location = geolocator.geocode(address)
-        
-        if location:
+    try:
+        url = "https://api.geoapify.com/v1/geocode/search"
+        params = {
+            "text": address,
+            "apiKey": GEOAPIFY_KEY
+        }
+
+        response = requests.get(url, params=params, timeout=10)
+        data = response.json()
+
+        if data["features"]:
+            coords = data["features"][0]["geometry"]["coordinates"]
+            longitude, latitude = coords
+
             return jsonify({
                 "success": True,
-                "latitude": location.latitude,
-                "longitude": location.longitude
+                "latitude": latitude,
+                "longitude": longitude
             }), 200
         else:
-            return jsonify({"success": False, "message": "Location not found."}), 404
+            return jsonify({"success": False, "message": "Location not found"}), 404
+
     except Exception as e:
-        return jsonify({"success": False, "message": str(e)}), 500
+        print("Geoapify error:", e)
+        return jsonify({"success": False, "message": "Geocoding error"}), 500
 ############################################################################
 
     

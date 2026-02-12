@@ -272,31 +272,9 @@ export async function make_businesses_table() {
 
             // Render each business as a card-like row
             businesses.forEach(biz => {
-                let rcount, ravg;
-
-                // Store review count as a data attribute
-                fetch_review_count(biz).then(count => {
-                    newRow.dataset.reviewCount = count;
-                    rcount = count;
-                }).catch(err => {
-                    console.warn('Failed to fetch review count for businessID', biz.id, err);
-                    newRow.dataset.reviewCount = 0;
-                    rcount = 0;
-                });
-
-                // Store avg star rating as a data attribute
-                fetch_avg_star_rating(biz).then(avg => {
-                    if (avg !== null) {
-                        newRow.dataset.avgStars = avg;
-                        ravg = avg.toFixed(1);
-                    }
-                }).catch(err => {
-                    console.warn('Failed to fetch average star rating for businessID', biz.id, err);
-                    ravg = 0;
-                });
-
                 const newRow = document.createElement('tr');
                 newRow.classList.add('business_card');
+
                 // mark the row with the business id for map interaction
                 if (biz.id !== undefined && biz.id !== null) {
                     newRow.dataset.businessId = biz.id;
@@ -321,7 +299,36 @@ export async function make_businesses_table() {
 
                 const reviewsInfo = document.createElement('div');
                 reviewsInfo.classList.add('biz_review_info');
-                reviewsInfo.textContent = `Number of reviews: ${rcount} ★ Average ratings: ${ravg}`
+                // Initialize with default text
+                reviewsInfo.textContent = `Number of reviews: 0 • Average ratings: -`;
+
+                // Helper function to update reviewsInfo text when data arrives
+                function updateReviewsInfo() {
+                    const rcount = newRow.dataset.reviewCount || 0;
+                    const ravg = newRow.dataset.avgStars ? parseFloat(newRow.dataset.avgStars).toFixed(1) : '-';
+                    reviewsInfo.textContent = `Number of reviews: ${rcount} • Average ratings: ${ravg}`;
+                }
+
+                // Fetch and update review count
+                fetch_review_count(biz).then(count => {
+                    newRow.dataset.reviewCount = count;
+                    updateReviewsInfo();
+                }).catch(err => {
+                    console.warn('Failed to fetch review count for businessID', biz.id, err);
+                    newRow.dataset.reviewCount = 0;
+                    updateReviewsInfo();
+                });
+
+                // Fetch and update avg star rating
+                fetch_avg_star_rating(biz).then(avg => {
+                    if (avg !== null) {
+                        newRow.dataset.avgStars = avg;
+                        updateReviewsInfo();
+                    }
+                }).catch(err => {
+                    console.warn('Failed to fetch average star rating for businessID', biz.id, err);
+                    updateReviewsInfo();
+                });
 
                 const controlsEl = document.createElement('div');
                 controlsEl.classList.add('biz_controls');
