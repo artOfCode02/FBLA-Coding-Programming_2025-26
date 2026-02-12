@@ -300,13 +300,13 @@ export async function make_businesses_table() {
                 const reviewsInfo = document.createElement('div');
                 reviewsInfo.classList.add('biz_review_info');
                 // Initialize with default text
-                reviewsInfo.textContent = `Number of reviews: 0 • Average ratings: -`;
+                reviewsInfo.textContent = `Number of reviews: 0 | Average ratings: -`;
 
                 // Helper function to update reviewsInfo text when data arrives
                 function updateReviewsInfo() {
                     const rcount = newRow.dataset.reviewCount || 0;
                     const ravg = newRow.dataset.avgStars ? parseFloat(newRow.dataset.avgStars).toFixed(1) : '-';
-                    reviewsInfo.textContent = `Number of reviews: ${rcount} • Average ratings: ${ravg}`;
+                    reviewsInfo.textContent = `Number of reviews: ${rcount} | Average ratings: ${ravg}`;
                 }
 
                 // Fetch and update review count

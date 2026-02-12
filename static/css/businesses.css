@@ -107,7 +107,7 @@
     color: #3b2a1f;
     margin-bottom: 6px;
 }
-.biz_addr {
+.biz_addr, .biz_review_info {
     font-size: 0.95rem;
     color: #5a4638;
     margin-bottom: 10px;
@@ -124,22 +124,7 @@
     cursor: pointer;
 }
 
-/* Position review count badge inside card */
-.business_card_cell {
-    position: relative;
-}
-.biz_review_count {
-    position: absolute;
-    right: 12px;
-    bottom: 8px;
-    font-size: 0.8rem;
-    color: #4a2d16;
-    background: rgba(255,255,255,0.85);
-    padding: 4px 8px;
-    border-radius: 8px;
-    border: 1px solid rgba(0,0,0,0.04);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.06);
-}
+
 
 /* Highlighting when hovering between map and list */
 .list-highlight .business_card_cell {

@@ -1,16 +1,16 @@
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QSizePolicy
-from PyQt6.QtWebEngineWidgets import QWebEngineView
-from PyQt6.QtCore import QUrl, QTimer, Qt
-from PyQt6.QtGui import QFontMetrics
-from PyQt6.QtWebEngineCore import QWebEnginePermission
+from PyQt6.QtWidgets import *
+from PyQt6.QtWebEngineWidgets import *
+from PyQt6.QtCore import *
+from PyQt6.QtGui import *
 
-import os
+
 import sys
 import threading
 import queue
 
 from flask import jsonify
 from app import app
+
 
 command_queue = queue.Queue()
 
