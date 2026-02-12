@@ -3,7 +3,7 @@ from PyQt6.QtWebEngineWidgets import *
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 
-
+import os
 import sys
 import threading
 import queue
@@ -11,6 +11,25 @@ import queue
 from flask import jsonify
 from app import app
 
+os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
+os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--disable-gpu-compositing"
+os.environ["QT_SCALE_FACTOR"] = "1"
+os.environ["QT_SCALE_FACTOR_ROUNDING_POLICY"] = "Round"
+os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--disable-features=NativeWindowOcclusion --disable-native-window-occlusion"
+
+# Before creating QApplication
+os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = (
+    "--disable-gpu-compositing "
+    "--disable-native-window-occlusion "
+    "--ui-disable-partial-raster "
+    "--disable-features=CalculateNativeWinOcclusion"
+)
+
+# Remove the QT_SCALE_FACTOR = 1 line
+os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1" 
+#os.environ["QT_SCALE_FACTOR_ROUNDING_POLICY"] = "PassThrough" # Better for Chromium
+
+QCoreApplication.setAttribute(Qt.ApplicationAttribute.AA_UseDesktopOpenGL, True)
 
 command_queue = queue.Queue()
 
@@ -91,6 +110,26 @@ def main():
     Qapp = QApplication(sys.argv)
     view = QWebEngineView()
     view.load(QUrl("http://127.0.0.1:5000"))
+
+    #view.page().inspectedPage().settings().setAttribute(
+    #    QWebEngineSettings.WebAttribute.LocalContentCanAccessRemoteUrls, True
+    #)
+
+    # Inject CSS to remove the "Native" Windows look which causes the glitch
+    custom_css = """
+    select {
+        appearance: none !important;
+        -webkit-appearance: none !important;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><path d="M0 0l5 5 5-5z" fill="black"/></svg>');
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        padding-right: 30px;
+    }
+    """
+    # You can execute this script on every page load
+    view.loadFinished.connect(lambda: view.page().runJavaScript(
+        f"const style = document.createElement('style'); style.innerHTML = `{custom_css}`; document.head.appendChild(style);"
+    ))
 
     # Build a simple navigation bar (non-editable URL display)
     main_window = QWidget()
