@@ -1,17 +1,17 @@
 # FBLA Coding & Programming Project Instructions
 ------------------------------------------------
-I. Section 1: running the file:
+## I. Section 1: running the file:
     1. locate the executable called setup_and_run.exe,
     2. or run "python3 setup_and_run.py" in cmd or powershell
 
-II. Section 1: index.html:
+## II. Section 1: index.html:
     1. To register for the website, enter a custom name (or leave it as anonymous)
     2. Then, if you want to, click on 'change geolocation' and enter in your address, city, and select the state 
      (results must me within the USA).
     3. Complet the CAPTCHA
     4. Press submit and it will pass on to businesses.html
 
-III. Section 2: businesses.html:
+## III. Section 2: businesses.html:
     1. You may scroll over each business on the left side of the page
     2. The list and the map shows nearby dining businesses around the area
     3. Hovering on a marker on the map shows the business name,
@@ -23,11 +23,11 @@ III. Section 2: businesses.html:
     6. On the bottom bar, pressing the 'change geolocation' button will open a dialog similar to the one in index.html,
      using this to swich the central location businesses are located around, letting you look for dining business places.
 
-IV. Section 3: reviews.html:
+## IV. Section 3: reviews.html:
     1. On the left side of the window, you may scroll to view al the availiable reviews.
     2. If the review is yours, you may delete the review by pressing 'delete review' on the botttom right.
     3. To the right, you may make a review by inputting a star rating and a review note, then pressing 'submit review'
     4. The top left button called '<< Back to businesses' will send you back you to businesses.html, the previous page
 
-V. Section 4, extra information:
+## V. Section 4, extra information:
     1. Pressing f12 opens DevTools, and pressing Ctrl + r reloads the window.
