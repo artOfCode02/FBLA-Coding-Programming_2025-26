@@ -104,6 +104,26 @@ def main():
     reload_btn = QPushButton("⟳")
     devtools_btn = QPushButton("DevTools")
 
+    # Set styles for buttons
+    buttons = [back_btn, forward_btn, reload_btn, devtools_btn]
+    for btn in buttons:
+        btn.setStyleSheet("""QPushButton {
+                                padding: 4px 8px; 
+                                background: #555; 
+                                color: #fff; 
+                                border: none; 
+                                border-radius: 3px;
+                                width: 60px;
+                            }
+                            QPushButton:hover {
+                                background: #777;
+                            }
+                            QPushButton:pressed {
+                                background: #333;
+                            }""")
+
+    
+
     url_label = QLabel()
     initial_url = "http://127.0.0.1:5000"
     url_label.setStyleSheet("""QLabel {
@@ -187,6 +207,9 @@ def main():
         url_label.setText(full_url[0])
 
     main_window.showMaximized()
+
+    #Make window backgound dark color
+    main_window.setStyleSheet("background-color: #2b2b2b; color: #fff;")
     
     # Qt timer runs on main thread to process commands from Flask
     timer = QTimer()
